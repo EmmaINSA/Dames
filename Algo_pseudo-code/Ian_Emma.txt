@@ -1,0 +1,12 @@
+PriseObligatoire:
+
+Si pion:
+	si adversaire devant lui ET case libre derrière adversaire:
+		ajouter coord du pion à manger à la liste
+	sinon:
+		FALSE
+
+Sinon (si dame):
+	si pion adversaire dans ses diago ET case libre derrière ces pions:
+		si aucun pion entre la dame et le pion à manger
+			ajouter coord du pion à manger à la liste
