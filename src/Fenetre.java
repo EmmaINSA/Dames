@@ -6,8 +6,8 @@ import java.awt.*;
  * Classe définissant la fenêtre, càd tout ce qui est en rapport
  * avec ce qui sera affiché sur la fenêtre du jeu
  * @author Emma
- * @version 1.1
- * @since 1.1
+ * @version 1.2
+ * @since 1.0
  * @see Plateau
  * */
 
@@ -39,7 +39,7 @@ public class Fenetre extends JFrame{
         this.setPos((int)screenSizeWidth/2 - this.size[0]/2,0);
         this.setLocation(this.pos[0], this.pos[1]);    // centré et +- joli
         this.setVisible(true);
-        this.setAlwaysOnTop(true);      // parce que.
+        this.setAlwaysOnTop(false);      // parce que.
         this.setContentPane(this.plateau);
     }
 

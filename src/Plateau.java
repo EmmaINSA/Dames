@@ -53,6 +53,16 @@ public class Plateau extends JPanel implements MouseListener{
         matrice[depart[0]][depart[1]] = null;   // on vide la case de depart
         matrice[arrivee[0]][arrivee[1]].setPos(arrivee);
         this.repaint();
+        System.out.println(this.dansCampAdverse(matrice[arrivee[1]][arrivee[0]], arrivee));
+    }
+
+    /**
+     * --- A ECRIRE/DEBUG ---
+     * Renvoie si le pion arrive dans le camp adverse, donc devient une dame
+     * */
+    public boolean dansCampAdverse(Pion pion, int[] coord){
+//        return (pion.isWhite() && coord[1]==0)||(!pion.isWhite() && coord[1]==7);
+        return false;       // a modifier
     }
 
     /**
@@ -75,7 +85,6 @@ public class Plateau extends JPanel implements MouseListener{
 
 
     /**
-     * --- A FAIRE ---
      * MouseListener
      * @since 1.2
      * */
@@ -84,22 +93,26 @@ public class Plateau extends JPanel implements MouseListener{
     public void mouseEntered(MouseEvent e){}
     public void mouseExited(MouseEvent e){}
 
-    // mieux
+    /**
+     * Définit les actions à effectuer une fois que la souris est relachée
+     * @param e l'objet du clic
+     * */
     public void mouseReleased(MouseEvent e){
+
         int x = e.getX();
         int y = e.getY();
 //        System.out.println(this.dansPlateau(x,y));        -> marche bien
         if (this.dansPlateau(x,y)){
             // si on a cliqué sur la grille
-            int[] clic = this.caseClic(x,y);
+            int[] caseClic = this.caseClic(x,y);
 //            System.out.println(clic[0]+", "+clic[1]);
 
             // marche po
-            if(this.pionDansCase(clic[0],clic[1]) && this.selected==null){
-                this.selected=clic;
+            if(this.pionDansCase(caseClic[0],caseClic[1]) && this.selected==null){
+                this.selected=caseClic;
             }else if (this.selected!=null){
-                if (!this.pionDansCase(clic[0], clic[1])) {
-                    this.bougePion(this.selected, clic);
+                if (!this.pionDansCase(caseClic[0], caseClic[1])) {
+                    this.bougePion(this.selected, caseClic);
                     this.selected = null;
                 }else{
                     this.selected = null;
@@ -109,7 +122,17 @@ public class Plateau extends JPanel implements MouseListener{
         }
     }
 
-
+    /**
+     * --- A ECRIRE ---
+     * La jolie fonction qui teste si le mouvement demandé par l'utilisateur est autorisé
+     * @param destination -> la case sur laquelle on aimerait aller
+     * @param pion -> la case où se situe le pion sélectionné
+     * @return canmove -> true si mouvement autorisé, sinon false */
+    private boolean canMove(int[] pion, int[] destination){
+        boolean canmove = false;
+        // a ecrire
+        return canmove;
+    }
     /**
      * Renvoie true si le clic effectué est sur la grille du plateau
      * @param x -> coordonnée horizontale du clic en px
@@ -141,7 +164,7 @@ public class Plateau extends JPanel implements MouseListener{
 
 
     /**
-     * Le joyeux bazar de l'affichage ＼(＾▽＾)／
+     * Le joyeux bazar de l'affichage --- RIP smiley 2018-2018 ---
      * @version 1.1
      * @since 1.1
      * */
