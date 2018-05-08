@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /**
  * @author Emma
- * @version 1.2
+ * @version 1.3.1   -> version 10x10
  *
  * Classe définissant le plateau de jeu, contenant les pions
  * ainsi que ses attributs (à définir, certainement sprite, position, les fonctions de l'affichage,
@@ -19,20 +19,21 @@ import java.io.IOException;
 
 public class Plateau extends JPanel implements MouseListener{
 
-    private Pion[][] matrice = new Pion[8][8];
+    private Pion[][] matrice = new Pion[10][10];      // 10x10
 
+    private boolean tour = true;    // true = blanc, false = noir
 
     private Image sprite;
 
     private final int[] POSPREMIERPION = {50,50};
-    private final int TAILLECASE = 75;        // avec le pixel de bordure
+    private final int TAILLECASE = 60;        // avec le pixel de bordure
 
     private int[] selected = null;  // coord du pion sélectionné
 
 
     Plateau(){
         try{
-            this.sprite = ImageIO.read(new File("Files/plateau.png"));
+            this.sprite = ImageIO.read(new File("Files/platal.png"));
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -70,13 +71,13 @@ public class Plateau extends JPanel implements MouseListener{
      * @since 1.1
      * */
     public void initPlateau(){
-        for (int i=0; i<8; i++){
-            if (i<3) {      // les pions noirs
-                for (int j = (i+1)%2; j < 8; j+=2) {
+        for (int i=0; i<10; i++){
+            if (i<4) {      // les pions noirs
+                for (int j = (i+1)%2; j < 10; j+=2) {
                     this.matrice[j][i]=new Pion(Pion.BLACK, j, i);
                 }
-            }else if(i>4){      // les pions blancs
-                for (int j = (i+1)%2; j<8; j+=2){
+            }else if(i>5){      // les pions blancs
+                for (int j = (i+1)%2; j<10; j+=2){
                     this.matrice[j][i]=new Pion(Pion.WHITE, j, i);
                 }
             }
@@ -139,8 +140,8 @@ public class Plateau extends JPanel implements MouseListener{
      * @param y -> coordonnée verticale du clic en px
      * */
     private boolean dansPlateau(int x, int y){
-        return (x>=POSPREMIERPION[1] && x<=POSPREMIERPION[1]+(TAILLECASE*8)
-                && y>=POSPREMIERPION[0] && y<=POSPREMIERPION[0]+(TAILLECASE*8));
+        return (x>=POSPREMIERPION[1] && x<=POSPREMIERPION[1]+(TAILLECASE*10)
+                && y>=POSPREMIERPION[0] && y<=POSPREMIERPION[0]+(TAILLECASE*10));
 
     }
 
@@ -171,8 +172,8 @@ public class Plateau extends JPanel implements MouseListener{
     public void paintComponent(Graphics g){
         g.drawImage(this.sprite, 0,0,this);
 
-        for(int i=0; i<8; i++){
-            for (int j=0; j<8; j++){
+        for(int i=0; i<10; i++){
+            for (int j=0; j<10; j++){
                 try{
                     g.drawImage(matrice[i][j].getSprite(), matrice[i][j].getPos()[0]*this.TAILLECASE + this.POSPREMIERPION[0],
                             matrice[i][j].getPos()[1]*this.TAILLECASE + this.POSPREMIERPION[1], this);
@@ -191,8 +192,8 @@ public class Plateau extends JPanel implements MouseListener{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(int i=0; i<8; i++){
-            for (int j=0; j<8; j++){
+        for(int i=0; i<10; i++){
+            for (int j=0; j<10; j++){
                 try{
                     sb.append(this.matrice[i][j].toString());
                 }catch (NullPointerException e){
