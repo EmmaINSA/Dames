@@ -203,4 +203,189 @@ public class Plateau extends JPanel implements MouseListener{
         }
         return sb.toString();
     }
+    
+    /**
+     * renvoie un tableau contenant les toutes les prises obligatoire du joueur mis en parametre
+     * 
+     * */
+     public int[][] priseObligatoire (boolean joueur) { //joueur noir : false , joueur blanc : true
+		
+		/**
+		 * On a une ligne par pion (20 pions/dames max par joueur donc 20 lignes)
+		 * Les deux premières case de la ligne sont les coordonnées du pion/dame, 
+		 * les suivantes les coordonnées des cases d'arrivé si prise obligatoire il y a
+		 * On a, au maximun 4 prises obligatoires possible (cas d'une damme) donc il y a 2+2*4=10 cases par lignes
+		 * 
+		 */
+		 
+		 
+		int[][] coordonees = new int[20][10];
+		int a = 0;
+		
+		for(int i = 0 ; i<coordonees.length ; i++){
+			for(int j = 0 ; j<coordonees[i].length ; j++){
+				coordonees[i][j] = 10;
+			}
+		}
+		
+		for(int i = 0 ; i<this.matrice.length ; i++){
+			for (int j = 0 ; j<this.matrice[i].length ; j++){
+				
+				//pour un pion
+				if(this.matrice[i][j] != null && this.matrice[i][j].getColor() == joueur && !this.matrice[i][j].isDame()){ //si il y a un pion de la couleur du joueur
+					if(joueur){//joueur blanc
+						if(j>1 && this.matrice[i-1][j-1] != null && this.matrice[i-1][j-1].getColor() != joueur && this.matrice[i-2][j-2] == null){
+							coordonees[a][0] = i;
+							coordonees[a][1] = j;
+							coordonees[a][2] = i-1;
+							coordonees[a][3] = j-1;
+						}//if il y a un pion adverse en diag à gauche et une case libre derière 
+						
+						if(j<6 && this.matrice[i-1][j+1] != null && this.matrice[i-1][j+1].getColor() != joueur && this.matrice[i-2][j+2] == null){
+							coordonees[a][0] = i;
+							coordonees[a][1] = j;
+							if(coordonees[a][2] == 10){
+								coordonees[a][2] = i-1;
+								coordonees[a][3] = j+1;
+							}else{
+								coordonees[a][4] = i-1;
+								coordonees[a][5] = j+1;
+							}
+							
+						}//if il y a un pion adverse en diag à droite et une case libre derière 
+					}//if joueur blanc
+					
+					if(!joueur){//joueur noir
+						if(j>1 && this.matrice[i+1][j-1] != null && this.matrice[i+1][j-1].getColor() != joueur && this.matrice[i+2][j-2] == null){
+							coordonees[a][0] = i;
+							coordonees[a][1] = j;
+							coordonees[a][2] = i+1;
+							coordonees[a][3] = j-1;
+						}//if il y a un pion adverse en diag à gauche et une case libre derière 
+						
+						if(j<6 && this.matrice[i+1][j+1] != null && this.matrice[i+1][j+1].getColor() != joueur && this.matrice[i+2][j+2] == null){
+							coordonees[a][0] = i;
+							coordonees[a][1] = j;
+							if(coordonees[a][2] == 10){
+								coordonees[a][2] = i+1;
+								coordonees[a][3] = j+1;
+							}else{
+								coordonees[a][4] = i+1;
+								coordonees[a][5] = j+1;
+							}
+						}//if il y a un pion adverse en diag à droite et une case libre derière 
+					}//if joueur noir
+				}//if pion bonne couleur
+				
+				//pour une damme
+				if(this.matrice[i][j] != null && this.matrice[i][j].getColor() == joueur && this.matrice[i][j].isDame()){ //si il y a une dame de la couleur du joueur
+					int k = i;
+					int l = j;
+					
+					while(k<9 && l<9){
+						k++;
+						l++;
+						if(this.matrice[k][l] != null && this.matrice[k][l].getColor() != joueur && this.matrice[k+1][l+1] == null){
+							coordonees[a][0] = i;
+							coordonees[a][1] = j;
+							
+							int m = 2;
+							while(coordonees[a][m] != 10){
+								m++;
+							}
+							
+							coordonees[a][m] = k+1;
+							coordonees[a][m+1] = l+1;
+							
+						}
+						if(this.matrice[k][l] != null && this.matrice[k][l].getColor() == joueur){
+							k=9;
+							l=9;
+						}
+					}//while1 : ++
+					
+					k=i;
+					l=j;
+					
+					while(k<9 && l>0){
+						k++;
+						l--;
+						if(this.matrice[k][l] != null && this.matrice[k][l].getColor() != joueur && this.matrice[k+1][l-1] == null){
+							coordonees[a][0] = i;
+							coordonees[a][1] = j;
+							
+							int m = 2;
+							while(coordonees[a][m] != 10){
+								m++;
+							}
+							
+							coordonees[a][2] = k+1;
+							coordonees[a][3] = l-1;
+						}
+						if(this.matrice[k][l] != null && this.matrice[k][l].getColor() == joueur){
+							k=9;
+							l=0;
+						}
+					}//while2 : +-
+					
+					k=i;
+					l=j;
+					
+					while(k>0 && l<9){
+						k--;
+						l++;
+						if(this.matrice[k][l] != null && this.matrice[k][l].getColor() != joueur && this.matrice[k-1][l+1] == null){
+							coordonees[a][0] = i;
+							coordonees[a][1] = j;
+							
+							int m = 2;
+							while(coordonees[a][m] != 10){
+								m++;
+							}
+							
+							coordonees[a][2] = k-1;
+							coordonees[a][3] = l+1;
+						}
+						if(this.matrice[k][l] != null && this.matrice[k][l].getColor() == joueur){
+							k=0;
+							l=9;
+						}
+					}//while3 : -+
+					
+					k=i;
+					l=j;
+					
+					while(k>0 && l>0){
+						k--;
+						l--;
+						if(this.matrice[k][l] != null && this.matrice[k][l].getColor() != joueur && this.matrice[k-1][l-1] == null){
+							coordonees[a][0] = i;
+							coordonees[a][1] = j;
+							
+							int m = 2;
+							while(coordonees[a][m] != 10){
+								m++;
+							}
+							
+							coordonees[a][2] = k-1;
+							coordonees[a][3] = l-1;
+						}
+						if(this.matrice[k][l] != null && this.matrice[k][l].getColor() == joueur){
+							k=0;
+							l=0;
+						}
+					}//while4 : --
+					
+					
+				}//if dame bonne couleur
+				
+				a++;
+
+
+			}//for j 
+		}//for i
+		
+		return coordonees;
+		
+	}//priseObligatoirePion
 }

@@ -96,6 +96,10 @@ public class Pion {
     public boolean isDame() {
         return dame;
     }
+    
+    public boolean getColor() {
+		return color;
+	}
 
     /**
      * --- A ECRIRE SI CA VOUS FAIT PLAISIR ---
