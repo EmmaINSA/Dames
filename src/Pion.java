@@ -56,18 +56,6 @@ public class Pion {
     }
 
     /**
-     * --- A ECRIRE ---
-     * @param coord -> les coordonnées du pion à tester dans la matrice
-     * @return bool
-     * */
-    public boolean canMoveLeft(int[] coord){
-        boolean bool = false;
-        // à écrire
-
-        return bool;
-    }
-
-    /**
      * Définit la couleur du pion (noir ou blanc)
      * Appelé une seule fois
      * @param color -> booléen : false = noir, true = blanc
