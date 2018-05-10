@@ -62,8 +62,7 @@ public class Plateau extends JPanel implements MouseListener{
      * Renvoie si le pion arrive dans le camp adverse, donc devient une dame
      * */
     public boolean dansCampAdverse(Pion pion, int[] coord){
-//        return (pion.isWhite() && coord[1]==0)||(!pion.isWhite() && coord[1]==7);
-        return false;       // a modifier
+		return (pion.isWhite() && coord[1]==0)||(!pion.isWhite() && coord[1]==9);
     }
 
     /**
@@ -126,7 +125,7 @@ public class Plateau extends JPanel implements MouseListener{
     /**
      * --- A ECRIRE ---
      * La jolie fonction qui teste si le mouvement demandé par l'utilisateur est autorisé
-     * @param destination -> la case sur laquelle on aimerait aller : case 0 -> ; ligne case 1 -> colone
+     * @param destination -> la case sur laquelle on aimerait aller
      * @param pion -> la case où se situe le pion sélectionné
      * @return canmove -> true si mouvement autorisé, sinon false */
     private boolean canMove(int[] pion, int[] destination){
@@ -136,17 +135,17 @@ public class Plateau extends JPanel implements MouseListener{
 			return false;
 		}
         
-        if(this.matrice[pion[0]][pion[1]].isWhite() && !this.matrice[pion[0]][pion[1]].isDame() && this.matrice[destination[0]][destination[1]]==null && (pion[0]>0 && destination[0] == pion[0]-1 && ((pion[1]>0 && destination[1] == pion[1]+1) || (pion[1]<9 && destination[1] == pion[1]-1))) || (pion[0]>1 && destination[0] == pion[0]-2 && ((pion[1]>1 && this.matrice[destination[0]-1][destination[1]-1] != null && !this.matrice[destination[0]-1][destination[1]-1].isWhite() && destination[1] == pion[1]-2) || (pion[1]<8 && this.matrice[destination[0]-1][destination[1]+1] != null && !this.matrice[destination[0]-1][destination[1]+1].isWhite() && destination[1] == pion[1]+2)))){
+        if(this.matrice[pion[0]][pion[1]].isWhite() && !this.matrice[pion[0]][pion[1]].isDame() && this.matrice[destination[0]][destination[1]]==null && (pion[1]>0 && destination[1] == pion[1]-1 && ((pion[0]>0 && destination[0] == pion[0]+1) || (pion[0]<9 && destination[0] == pion[0]-1))) || (pion[1]>1 && destination[1] == pion[1]-2 && ((pion[0]>1 && this.matrice[destination[0]-1][destination[1]-1] != null && !this.matrice[destination[0]-1][destination[1]-1].isWhite() && destination[0] == pion[0]-2) || (pion[0]<8 && this.matrice[destination[0]-1][destination[1]+1] != null && !this.matrice[destination[0]-1][destination[1]+1].isWhite() && destination[0] == pion[0]+2)))){
 			canmove = true;
 		}//pion blanc
 		
-		if(!this.matrice[pion[0]][pion[1]].isWhite() && !this.matrice[pion[0]][pion[1]].isDame() && this.matrice[destination[0]][destination[1]]==null && (pion[0]<9 && destination[0] == pion[0]+1 && ((pion[1]>0 && destination[1] == pion[1]+1) || (pion[1]<9 && destination[1] == pion[1]-1))) || (pion[0]<8 && destination[0] == pion[0]+2 && ((pion[1]>1 && this.matrice[destination[0]-1][destination[1]-1] != null && this.matrice[destination[0]-1][destination[1]-1].isWhite() && destination[1] == pion[1]-2) || (pion[1]<8 && this.matrice[destination[0]-1][destination[1]+1] != null && this.matrice[destination[0]-1][destination[1]+1].isWhite() && destination[1] == pion[1]+2)))){
+		if(!this.matrice[pion[0]][pion[1]].isWhite() && !this.matrice[pion[0]][pion[1]].isDame() && this.matrice[destination[0]][destination[1]]==null && (pion[1]<9 && destination[1] == pion[1]+1 && ((pion[0]>0 && destination[0] == pion[0]+1) || (pion[0]<9 && destination[0] == pion[0]-1))) || (pion[1]<8 && destination[1] == pion[1]+2 && ((pion[0]>1 && this.matrice[destination[0]-1][destination[1]-1] != null && this.matrice[destination[0]-1][destination[1]-1].isWhite() && destination[0] == pion[0]-2) || (pion[0]<8 && this.matrice[destination[0]-1][destination[1]+1] != null && this.matrice[destination[0]-1][destination[1]+1].isWhite() && destination[0] == pion[0]+2)))){
 			canmove = true;
 		}//pion noir
 		
 		if(this.matrice[pion[0]][pion[1]].isDame() && this.matrice[destination[0]][destination[1]]==null){
-			int k = pion[0];
-			int l = pion[1];
+			int l = pion[0];
+			int k = pion[1];
 			
 			if(destination[0]>pion[0] && destination[1]>pion[1]){	
 				while(k<destination[0] && l<destination[1]){
@@ -302,36 +301,36 @@ public class Plateau extends JPanel implements MouseListener{
 				//pour un pion
 				if(this.matrice[i][j] != null && this.matrice[i][j].isWhite() == joueur && !this.matrice[i][j].isDame()){ //si il y a un pion de la couleur du joueur
 					if(joueur){//joueur blanc
-						if(j>1 && this.matrice[i-1][j-1] != null && this.matrice[i-1][j-1].isWhite() != joueur && this.matrice[i-2][j-2] == null){
+						if(i>1 && this.matrice[i-1][j-1] != null && this.matrice[i-1][j-1].isWhite() != joueur && this.matrice[i-2][j-2] == null){
 							coordonees[a][0] = i;
 							coordonees[a][1] = j;
 							coordonees[a][2] = i-1;
 							coordonees[a][3] = j-1;
 						}//if il y a un pion adverse en diag à gauche et une case libre derière 
 						
-						if(j<6 && this.matrice[i-1][j+1] != null && this.matrice[i-1][j+1].isWhite() != joueur && this.matrice[i-2][j+2] == null){
+						if(i<6 && this.matrice[i+1][j-1] != null && this.matrice[i+1][j-1].isWhite() != joueur && this.matrice[i+2][j-2] == null){
 							coordonees[a][0] = i;
 							coordonees[a][1] = j;
 							if(coordonees[a][2] == 10){
-								coordonees[a][2] = i-1;
-								coordonees[a][3] = j+1;
+								coordonees[a][2] = i+1;
+								coordonees[a][3] = j-1;
 							}else{
-								coordonees[a][4] = i-1;
-								coordonees[a][5] = j+1;
+								coordonees[a][4] = i+1;
+								coordonees[a][5] = j-1;
 							}
 							
 						}//if il y a un pion adverse en diag à droite et une case libre derière 
 					}//if joueur blanc
 					
 					if(!joueur){//joueur noir
-						if(j>1 && this.matrice[i+1][j-1] != null && this.matrice[i+1][j-1].isWhite() != joueur && this.matrice[i+2][j-2] == null){
+						if(i>1 && this.matrice[i-1][j+1] != null && this.matrice[i-1][j+1].isWhite() != joueur && this.matrice[i-2][j+2] == null){
 							coordonees[a][0] = i;
 							coordonees[a][1] = j;
-							coordonees[a][2] = i+1;
-							coordonees[a][3] = j-1;
+							coordonees[a][2] = i-1;
+							coordonees[a][3] = j+1;
 						}//if il y a un pion adverse en diag à gauche et une case libre derière 
 						
-						if(j<6 && this.matrice[i+1][j+1] != null && this.matrice[i+1][j+1].isWhite() != joueur && this.matrice[i+2][j+2] == null){
+						if(i<6 && this.matrice[i+1][j+1] != null && this.matrice[i+1][j+1].isWhite() != joueur && this.matrice[i+2][j+2] == null){
 							coordonees[a][0] = i;
 							coordonees[a][1] = j;
 							if(coordonees[a][2] == 10){
@@ -365,6 +364,9 @@ public class Plateau extends JPanel implements MouseListener{
 							coordonees[a][m] = k+1;
 							coordonees[a][m+1] = l+1;
 							
+							k=9;
+							l=9;
+							
 						}
 						if(this.matrice[k][l] != null && this.matrice[k][l].isWhite() == joueur){
 							k=9;
@@ -389,6 +391,9 @@ public class Plateau extends JPanel implements MouseListener{
 							
 							coordonees[a][2] = k+1;
 							coordonees[a][3] = l-1;
+							
+							k=9;
+							l=0;
 						}
 						if(this.matrice[k][l] != null && this.matrice[k][l].isWhite() == joueur){
 							k=9;
@@ -413,6 +418,9 @@ public class Plateau extends JPanel implements MouseListener{
 							
 							coordonees[a][2] = k-1;
 							coordonees[a][3] = l+1;
+							
+							k=0;
+							l=9;
 						}
 						if(this.matrice[k][l] != null && this.matrice[k][l].isWhite() == joueur){
 							k=0;
@@ -437,6 +445,9 @@ public class Plateau extends JPanel implements MouseListener{
 							
 							coordonees[a][2] = k-1;
 							coordonees[a][3] = l-1;
+							
+							k=0;
+							l=0;
 						}
 						if(this.matrice[k][l] != null && this.matrice[k][l].isWhite() == joueur){
 							k=0;
