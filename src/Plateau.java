@@ -132,13 +132,17 @@ public class Plateau extends JPanel implements MouseListener{
     private boolean canMove(int[] pion, int[] destination){
         boolean canmove = false;
         
-        if(this.matrice[pion[0]][pion[1]].isWhite() && !this.matrice[pion[0]][pion[1]].isDame() && this.matrice[destination[0]][destination[1]]==null && pion[0]>0 && destination[0]<pion[0] && ((pion[1]>0 && destination[1] == pion[1]+1) || (pion[1]<9 && destination[1] == pion[1]-1))){
+        if(this.matrice[destination[0]][destination[1]]!=null){
+			return false;
+		}
+        
+        if(this.matrice[pion[0]][pion[1]].isWhite() && !this.matrice[pion[0]][pion[1]].isDame() && this.matrice[destination[0]][destination[1]]==null && (pion[0]>0 && destination[0] == pion[0]-1 && ((pion[1]>0 && destination[1] == pion[1]+1) || (pion[1]<9 && destination[1] == pion[1]-1))) || (pion[0]>1 && destination[0] == pion[0]-2 && ((pion[1]>1 && this.matrice[destination[0]-1][destination[1]-1] != null && !this.matrice[destination[0]-1][destination[1]-1].isWhite() && destination[1] == pion[1]-2) || (pion[1]<8 && this.matrice[destination[0]-1][destination[1]+1] != null && !this.matrice[destination[0]-1][destination[1]+1].isWhite() && destination[1] == pion[1]+2)))){
 			canmove = true;
-		}//pion blanc sans prise
+		}//pion blanc
 		
-		if(!this.matrice[pion[0]][pion[1]].isWhite() && !this.matrice[pion[0]][pion[1]].isDame() && this.matrice[destination[0]][destination[1]]==null && pion[0]<9 && destination[0]>pion[0] && ((pion[1]>0 && destination[1] == pion[1]+1) || (pion[1]<9 && destination[1] == pion[1]-1))){
+		if(!this.matrice[pion[0]][pion[1]].isWhite() && !this.matrice[pion[0]][pion[1]].isDame() && this.matrice[destination[0]][destination[1]]==null && (pion[0]<9 && destination[0] == pion[0]+1 && ((pion[1]>0 && destination[1] == pion[1]+1) || (pion[1]<9 && destination[1] == pion[1]-1))) || (pion[0]<8 && destination[0] == pion[0]+2 && ((pion[1]>1 && this.matrice[destination[0]-1][destination[1]-1] != null && this.matrice[destination[0]-1][destination[1]-1].isWhite() && destination[1] == pion[1]-2) || (pion[1]<8 && this.matrice[destination[0]-1][destination[1]+1] != null && this.matrice[destination[0]-1][destination[1]+1].isWhite() && destination[1] == pion[1]+2)))){
 			canmove = true;
-		}//pion noir sans prise
+		}//pion noir
 		
 		if(this.matrice[pion[0]][pion[1]].isDame() && this.matrice[destination[0]][destination[1]]==null){
 			int k = pion[0];
@@ -148,10 +152,10 @@ public class Plateau extends JPanel implements MouseListener{
 				while(k<destination[0] && l<destination[1]){
 					k++;
 					l++;	
-					if(this.matrice[k][l] != null){
-						return false;
-					}else {
+					if(this.matrice[k][l] == null || (this.matrice[k][l] != null && this.matrice[k+1][l+1] == null && destination[0] == k+1 && destination[1] == l+1)){
 						canmove = true;
+					}else {
+						return false;
 					}
 				}//while1 : ++
 			}
@@ -160,38 +164,40 @@ public class Plateau extends JPanel implements MouseListener{
 				while(k<destination[0] && l>destination[1]){
 					k++;
 					l--;	
-					if(this.matrice[k][l] != null){
-						return false;
-					}else {
+					if(this.matrice[k][l] == null|| (this.matrice[k][l] != null && this.matrice[k+1][l-1] == null && destination[0] == k+1 && destination[1] == l-1)){
 						canmove = true;
+					}else {
+						return false;
 					}
-				}//while1 : +-
+				}//while2 : +-
 			}
 			
 			if(destination[0]<pion[0] && destination[1]>pion[1]){	
 				while(k>destination[0] && l<destination[1]){
 					k--;
 					l++;	
-					if(this.matrice[k][l] != null){
-						return false;
-					}else {
+					if(this.matrice[k][l] == null || (this.matrice[k][l] != null && this.matrice[k-1][l+1] == null && destination[0] == k-1 && destination[1] == l+1)){
 						canmove = true;
+					}else {
+						return false;
 					}
-				}//while1 : -+
+				}//while3 : -+
 			}
 				
 				if(destination[0]<pion[0] && destination[1]<pion[1]){	
 				while(k>destination[0] && l>destination[1]){
 					k--;
 					l--;	
-					if(this.matrice[k][l] != null){
-						return false;
-					}else {
+					if(this.matrice[k][l] == null || (this.matrice[k][l] != null && this.matrice[k-1][l-1] == null && destination[0] == k-1 && destination[1] == l-1)){
 						canmove = true;
+					}else {
+						return false;
 					}
-				}//while1 : --
+				}//while4 : --
 			}
-		}//dame sans prise
+		}//dame
+		
+		
 				
         return canmove;
     }
