@@ -1,29 +1,49 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-import javax.imageio.ImageIO;
-import javax.swing.JPanel;
-import javax.swing.JButton;
 
-public class Bouton extends JButton {
+public class Bouton extends JButton implements MouseListener{
 
-    private String name;
+    private Color couleur = Color.BLUE;
+    private String fonction;
+    private String title = "Oh un bouton mal initialisé :)";
+    private int x = 50;
+    private int y = 50;
+//    private int
 
-    public Bouton(String string){
-        super(string);
-        this.name = string;
+    Bouton(String fonction){
+        super();
+        this.init(fonction);
     }
 
-    public void paintComponent(Graphics g){
-        Graphics2D g2d = (Graphics2D)g;
-        GradientPaint gd = new GradientPaint(0,0, Color.RED,30,30, Color.cyan, true);
-        g2d.setPaint(gd);
-        g2d.fillRect(0,0,this.getWidth(), this.getHeight());
+    private void init(String fonction){
+        if(fonction.equals("JcJ")){
+            this.title = "Lancer une partie joueur contre joueur";
+            this.y = 100;
+        }else if(fonction.equals("IA")){
+            this.title = "Lancer une partie solo contre IA";
+            this.y = 200;
+        }
+    }
+
+    public void mouseClicked(MouseEvent event) { }
+
+    public void mouseEntered(MouseEvent event) {
+        this.couleur = Color.cyan;
+    }
+
+    public void mouseExited(MouseEvent event) {
+        this.couleur = Color.BLUE;
+    }
+
+    public void mousePressed(MouseEvent event) { }
+
+    public void mouseReleased(MouseEvent event) { }
+
+    @Override
+    public void paintComponent(Graphics g) {
+//        g.fillRect();
     }
 }

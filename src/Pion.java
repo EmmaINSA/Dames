@@ -5,7 +5,7 @@ import java.io.IOException;
 
 /**
  * @author Emma
- * @version 1.1
+ * @version 1.4.1
  *
  * Classe utilisée pour tous les pions (dames ou non, qq soit leur couleur)
  *
@@ -28,9 +28,9 @@ public class Pion {
 
         try{
             if (color == BLACK) {
-                this.sprite = ImageIO.read(new File("Files/pion_noir.png"));
+                this.sprite = ImageIO.read(new File("Files/pion_N.png"));
             }else{
-                this.sprite = ImageIO.read(new File("Files/pion_blanc.png"));
+                this.sprite = ImageIO.read(new File("Files/pion_B.png"));
             }
         }catch (IOException e){
             e.printStackTrace();
@@ -45,9 +45,9 @@ public class Pion {
 
         try{
             if (color == BLACK) {
-                this.sprite = ImageIO.read(new File("Files/pion_noir.png"));
+                this.sprite = ImageIO.read(new File("Files/pion_N.png"));
             }else{
-                this.sprite = ImageIO.read(new File("Files/pion_blanc.png"));
+                this.sprite = ImageIO.read(new File("Files/pion_B.png"));
             }
         }catch (IOException e){
             e.printStackTrace();
