@@ -1,10 +1,9 @@
 import javax.swing.*;
-import java.awt.*;
 
 public class Menu extends JFrame {
 
-    private PanelMenu PAN = new PanelMenu();
-    private int[] windowSize = {600,600};
+    private PanelMenu PAN = new PanelMenu(this);
+    private int[] windowSize = {700,600};
 
 
     Menu(){
@@ -19,6 +18,12 @@ public class Menu extends JFrame {
         this.setResizable(false);
         this.setContentPane(this.PAN);
         this.setVisible(true);
+    }
+
+
+    public void kill(){
+        this.setVisible(false);
+        this.dispose();
     }
 
 }

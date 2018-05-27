@@ -63,4 +63,5 @@ public class FenetreJeu extends JFrame{
         return this.plateau;
     }
     // à remplir
+
 }
