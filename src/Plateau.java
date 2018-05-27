@@ -289,8 +289,6 @@ public class Plateau extends JPanel implements MouseListener{
 
 
 
-
-
     /**
      * @author Ian
      * renvoie un tableau contenant les toutes les prises obligatoire du joueur mis en parametre
@@ -486,4 +484,5 @@ public class Plateau extends JPanel implements MouseListener{
         return coordonees;
 
     }//priseObligatoirePion
+
 }
