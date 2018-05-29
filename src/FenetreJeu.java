@@ -6,31 +6,38 @@ import java.awt.*;
  * Classe définissant la fenêtre, càd tout ce qui est en rapport
  * avec ce qui sera affiché sur la fenêtre du jeu
  * @author Emma
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  * @see Plateau
  * */
 
-public class Fenetre extends JFrame{
+public class FenetreJeu extends JFrame{
 
     private Plateau plateau = new Plateau();
     private int[] size = {716,740};     // totalement empirique mais pas dégueu
     private int[] pos = new int[2];
+    private boolean gamemode;
 
-    Fenetre(){
-        this.init();        // gère l'initialisation de la fenetre
+    /**
+     * Constructeur appelé quand on commence le jeu à proprement parler
+     * @param gamemode -> false : JcJ
+     *                 -> true : J vs IA
+     * */
+    FenetreJeu(boolean gamemode){
+        this.init(gamemode);        // gère l'initialisation de la fenetre
     }
 
-    Fenetre(int[] size){    // just in case
-        this.init();
+    FenetreJeu(int[] size, boolean gamemode){    // just in case
+        this.init(gamemode);
         this.setSize(size);
     }
 
-    private void init(){
+    private void init(boolean gamemode){
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         double screenSizeWidth = screenSize.getWidth();
 
+        this.gamemode = gamemode;
         this.setTitle("Jeu de dames");
         this.setSize(this.size[0],this.size[1]);
         this.setLocationRelativeTo(null);
@@ -56,4 +63,5 @@ public class Fenetre extends JFrame{
         return this.plateau;
     }
     // à remplir
+
 }
