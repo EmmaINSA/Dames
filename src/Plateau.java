@@ -120,7 +120,6 @@ public class Plateau extends JPanel implements MouseListener{
     }
 
     /**
-     * @author Ian
      * La jolie fonction qui teste si le mouvement demandé par l'utilisateur est autorisé
      * @param destination -> la case sur laquelle on aimerait aller
      * @param pion -> la case où se situe le pion sélectionné
