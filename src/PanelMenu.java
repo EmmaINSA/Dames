@@ -37,7 +37,7 @@ public class PanelMenu extends JPanel {
     @Override
     public Insets getInsets() {
         Insets normal = super.getInsets();
-        return new Insets(normal.top + 150, normal.left+80, normal.bottom, normal.right +80);
+        return new Insets(normal.top + 200, normal.left+80, normal.bottom, normal.right +80);
     }
 
     @Override

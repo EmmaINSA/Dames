@@ -32,8 +32,8 @@ public class Bouton extends JButton implements MouseListener {
         if (fonction.equals("JcJ")) {
             this.y = 100;
             try{
-                this.sprite_normal = new ImageIcon(ImageIO.read(new File("Files/JcJ.png")));
-                this.sprite_hovered = new ImageIcon(ImageIO.read(new File("Files/JcJ_hover.png")));
+                this.sprite_normal = new ImageIcon(ImageIO.read(new File("Files/JcJ2.png")));
+                this.sprite_hovered = new ImageIcon(ImageIO.read(new File("Files/JcJ_hover2.png")));
             }catch (IOException e){
                 e.printStackTrace();
             }
@@ -41,8 +41,8 @@ public class Bouton extends JButton implements MouseListener {
         } else if (fonction.equals("IA")) {
             this.y = 300;
             try{
-                this.sprite_normal = new ImageIcon(ImageIO.read(new File("Files/JvIA.png")));
-                this.sprite_hovered = new ImageIcon(ImageIO.read(new File("Files/JvIA_hover.png")));
+                this.sprite_normal = new ImageIcon(ImageIO.read(new File("Files/JvIA2.png")));
+                this.sprite_hovered = new ImageIcon(ImageIO.read(new File("Files/JvIA_hover2.png")));
             }catch (IOException e){
                 e.printStackTrace();
             }
@@ -58,6 +58,8 @@ public class Bouton extends JButton implements MouseListener {
         }catch (IOException e){
             e.printStackTrace();
         }
+
+//        System.out.println(this.tailleSprite()[0]+" "+this.tailleSprite()[1]);
     }
 
 
@@ -85,4 +87,7 @@ public class Bouton extends JButton implements MouseListener {
 
     public void mouseReleased(MouseEvent event) { }
 
+    public int[] tailleSprite(){
+        return new int[] {this.sprite_normal.getIconWidth(), this.sprite_normal.getIconHeight()};
+    }
 }

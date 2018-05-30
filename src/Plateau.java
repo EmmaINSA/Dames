@@ -20,15 +20,17 @@ import java.io.IOException;
 public class Plateau extends JPanel implements MouseListener{
 
     private Pion[][] matrice = new Pion[10][10];      // 10x10
-
     private boolean joueur = true;    // actualisé à chaque tour, true = blanc, false = noir
-
     private Image sprite;
 
     private final int[] POSPREMIERPION = {50,50};
-    private final int TAILLECASE = 60;        // avec le pixel de bordure
+    private final int TAILLECASE = 60, PIONSPARLIGNE=7;        // avec le pixel de bordure
+    private final int TAILLEPLATAL = POSPREMIERPION[0]*2+10*TAILLECASE;
 
     private int[] selected = null;  // coord du pion sélectionné
+
+    private Pion[] pionBmourus = new Pion[20], pionNmourus= new Pion[20];   // pour afficher les pions mangés sur le bord
+    private int nbPionBmourus = 0, nbPionNmourus = 0;
 
 
     Plateau(){
@@ -54,7 +56,7 @@ public class Plateau extends JPanel implements MouseListener{
         matrice[depart[0]][depart[1]] = null;   // on vide la case de depart
         matrice[arrivee[0]][arrivee[1]].setPos(arrivee);
         this.repaint();
-        System.out.println(this.dansCampAdverse(matrice[arrivee[1]][arrivee[0]], arrivee));
+//        System.out.println(this.dansCampAdverse(matrice[arrivee[1]][arrivee[0]], arrivee));
     }
 
     /**
@@ -82,6 +84,28 @@ public class Plateau extends JPanel implements MouseListener{
                 }
             }
         }
+
+        // --- TEST ---
+        // noirs
+        this.mangePion(0,1);
+        this.mangePion(0,3);
+        this.mangePion(0,5);
+        this.mangePion(0,7);
+        this.mangePion(0,9);
+        this.mangePion(1,0);
+        this.mangePion(1,2);
+        this.mangePion(1,4);
+        this.mangePion(1,6);
+        // blancs
+        this.mangePion(6,1);
+        this.mangePion(6,3);
+        this.mangePion(6,5);
+        this.mangePion(6,7);
+        this.mangePion(6,9);
+        this.mangePion(7,0);
+        this.mangePion(7,2);
+        this.mangePion(7,4);
+        this.mangePion(7,6);
     }
 
 
@@ -113,11 +137,31 @@ public class Plateau extends JPanel implements MouseListener{
                     this.selected=caseClic;
             }else if (this.selected!=null && this.canMove(selected, caseClic)){
                 this.bougePion(selected, caseClic);
+                System.out.println("nb pions\nblancs:"+nbPions(true)+"\nnoirs : "+nbPions(false));
                 this.selected = null;
             }
 
         }
     }
+
+    /**
+     * Update le platal quand on mange un pion
+     * */
+    private void mangePion(int l, int c){
+        if (this.matrice[c][l]!=null) {
+            if (this.matrice[c][l].isWhite()) {
+                this.pionBmourus[this.nbPionBmourus] = this.matrice[c][l];
+                this.nbPionBmourus++;
+            } else {
+                this.pionNmourus[this.nbPionNmourus] = this.matrice[c][l];
+                this.nbPionNmourus++;
+            }
+            this.matrice[c][l] = null;
+        }else{
+            System.out.println("Oups, on ne peut pas manger de pion à la case "+Integer.toString(l)+", "+Integer.toString(c));
+        }
+    }
+
 
     /**
      * La jolie fonction qui teste si le mouvement demandé par l'utilisateur est autorisé
@@ -252,15 +296,26 @@ public class Plateau extends JPanel implements MouseListener{
     public void paintComponent(Graphics g){
         g.drawImage(this.sprite, 0,0,this);     // platal
 
+        // les pions du plateau
         for(int i=0; i<10; i++){
             for (int j=0; j<10; j++){
                 try{
                     g.drawImage(matrice[i][j].getSprite(), matrice[i][j].getPos()[0]*this.TAILLECASE + this.POSPREMIERPION[0],
                             matrice[i][j].getPos()[1]*this.TAILLECASE + this.POSPREMIERPION[1], this);
                 }catch (NullPointerException e){
-//                    System.out.println("Case vide");    // pour le débug, à virer
                 }
             }
+        }
+
+        // les pions mourus
+        for (int i=0; i<nbPionBmourus; i++){
+            g.drawImage(this.pionBmourus[i].getSprite(), this.TAILLEPLATAL+20+(i%PIONSPARLIGNE)*30,
+                    this.POSPREMIERPION[1]+(i/PIONSPARLIGNE)*TAILLECASE, this);  // modulo à voir
+        }
+        for (int i=0; i<nbPionNmourus; i++){
+            g.drawImage(this.pionNmourus[i].getSprite(), this.TAILLEPLATAL+20+(i%PIONSPARLIGNE)*30,
+                    this.TAILLEPLATAL-this.POSPREMIERPION[1]-(4*this.TAILLECASE)+(i/PIONSPARLIGNE)*TAILLECASE, this);  // modulo à voir
+
         }
     }
 
@@ -285,6 +340,8 @@ public class Plateau extends JPanel implements MouseListener{
         }
         return sb.toString();
     }
+
+
 
 
 
@@ -483,5 +540,45 @@ public class Plateau extends JPanel implements MouseListener{
         return coordonees;
 
     }//priseObligatoirePion
+
+
+    // ---- CHANTIER ----
+
+    /**
+     * Algo min/max utilisé par l'IA pour déterminer le coup optimal à jouer
+     * a faire : @param profondeur la profondeur de la recherche (récursivité)
+     * @return les coordonnées de la prise optimale, dans l'ordre :
+     * x pion, y pion, x case visée, y case visée
+     * */
+    // a def
+
+
+    private int nbPions(boolean couleur){
+        int nb = 0;
+        for (int l=0; l<10; l++){
+            for (int c=0; c<10; c++){
+                if (matrice[l][c]!=null){
+                    if (matrice[l][c].isWhite() == couleur){
+                        nb++;
+                    }
+                }
+            }
+        }
+        return nb;
+    }
+
+    private int[] minimax(int profondeur){
+        int xdepart=0 , ydepart=0, xarrivee=0, yarrivee=0;
+        // blablabla
+        return new int[] {xdepart, ydepart, xarrivee, yarrivee};
+    }
+
+    /**
+     * Renvoie un score donné à la position actuelle du platal */
+    private int score(){
+        int score = 0;
+        // à écrire
+        return score;
+    }
 
 }

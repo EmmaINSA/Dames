@@ -18,6 +18,7 @@ public class Menu extends JFrame {
         this.setResizable(false);
         this.setContentPane(this.PAN);
         this.setVisible(true);
+        // this.setIconImage();
     }
 
 

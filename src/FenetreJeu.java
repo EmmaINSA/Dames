@@ -14,7 +14,7 @@ import java.awt.*;
 public class FenetreJeu extends JFrame{
 
     private Plateau plateau = new Plateau();
-    private int[] size = {716,740};     // totalement empirique mais pas dégueu
+    private int[] size = {1000,740};     // totalement empirique mais pas dégueu : {716,740}
     private int[] pos = new int[2];
     private boolean gamemode;
 
