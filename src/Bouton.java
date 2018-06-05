@@ -54,7 +54,7 @@ public class Bouton extends JButton implements MouseListener {
         this.setFocusPainted(false);
 
         try{
-            this.imagetest = ImageIO.read(new File("Files/JcJ.png"));
+            this.imagetest = ImageIO.read(new File("Files/JcJ2.png"));
         }catch (IOException e){
             e.printStackTrace();
         }
