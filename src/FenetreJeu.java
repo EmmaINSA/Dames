@@ -1,5 +1,8 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * --- A ECRIRE ---
@@ -17,6 +20,7 @@ public class FenetreJeu extends JFrame{
     private int[] size = {1000,740};     // totalement empirique mais pas dégueu : {716,740}
     private int[] pos = new int[2];
     private boolean gamemode;
+    private Image icone;
 
     /**
      * Constructeur appelé quand on commence le jeu à proprement parler
@@ -37,6 +41,12 @@ public class FenetreJeu extends JFrame{
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         double screenSizeWidth = screenSize.getWidth();
 
+        try {
+            this.icone = ImageIO.read(new File("Files/pion_N.png"));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
         this.gamemode = gamemode;
         this.setTitle("Jeu de dames");
         this.setSize(this.size[0],this.size[1]);
@@ -47,6 +57,7 @@ public class FenetreJeu extends JFrame{
         this.setLocation(this.pos[0], this.pos[1]);    // centré et +- joli
         this.setVisible(true);
         this.setAlwaysOnTop(false);      // parce que.
+        this.setIconImage(this.icone);
         this.setContentPane(this.plateau);
     }
 
