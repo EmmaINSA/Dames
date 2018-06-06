@@ -106,16 +106,8 @@ public class Plateau extends JPanel implements MouseListener{
 
     /**
      * Actualise la position d'un pion dans la matrice
-     * ET dans ses coordonnées perso
+     * ET dans ses coordonnées perso (à enlever ?)
      * */
-    public void bougePion(int[] depart, int[] arrivee){
-        matrice[arrivee[0]][arrivee[1]] = matrice[depart[0]][depart[1]];    // on copie le pion dans la case cible
-        matrice[depart[0]][depart[1]] = null;   // on vide la case de depart
-        matrice[arrivee[0]][arrivee[1]].setPos(arrivee);
-        this.repaint();
-//        System.out.println(this.dansCampAdverse(matrice[arrivee[1]][arrivee[0]], arrivee));
-    }
-
     public void bougePion(int cdepart, int ldepart, int carrivee, int larrivee){
         matrice[carrivee][larrivee] = matrice[cdepart][ldepart];    // on copie le pion dans la case cible
         matrice[cdepart][ldepart] = null;   // on vide la case de depart
@@ -409,13 +401,13 @@ public class Plateau extends JPanel implements MouseListener{
      * */
     private int[][] priseObligatoire(){
         int[][] coord = new int[20][16];     // 20 pions qui ont une prise obligatoire max,
-        // pour chacun 4 prises obligatoires (si dame, sinon 2 si pion) * 4 coord par possibilité -> 16
+        // pour chacun (2 coord) 4 prises obligatoires max (si dame, sinon 2 si pion) * 2 (coord par possibilité) -> 10
         int pions=0, positions=0;       // compte le nb de pions avec prise obligatoire
         // et pour chacun (reset) le nb de positions possibles
 
         // initialisation du tableau à 10, valeur d'arrêt de la lecture du tableau
         for (int a=0; a<20;a++){
-            for (int b=0; b<16 ; b++){
+            for (int b=0; b<10 ; b++){
                 coord[a][b]=10;
             }
         }
@@ -495,29 +487,25 @@ public class Plateau extends JPanel implements MouseListener{
                                 }
                             }
 
+
                         }else{      // si c'est une dame
 
-                            boolean finDiago = false, trouve=false;
-                            int dist = 0;
+                            int dist = 1;
                             // diago haut-gauche
-                            do{
-                                if (c-dist>=0 && l-dist>=0) {
-                                    if (this.matrice[c - dist][l - dist] == null) {
+                            while(c-dist>0 && l-dist>0){    // la case derrière celle considérée ne dépasse pas du platal
 
+                                if(this.matrice[c-dist][l-dist]!=null){ // on a trouvé un pion
+                                    if (this.matrice[c-dist][l-dist].isWhite()!=this.tour && this.matrice[c-dist-1][l-dist-1]==null){
+                                        // pion adverse & case derrière libre
+                                        coord[pions][0]=c;
+                                        coord[pions][1]=l;
+                                        // finir
                                     }
+                                }else {
                                     dist++;
                                 }
-                            }while(!finDiago);
+                            }
 
-
-                            /*
-                            Pour chaque diago :
-
-                            bool finDiago = false;
-                            int dist = 0;
-                            Tant que ()
-
-                             */
                         }
 
                     }
