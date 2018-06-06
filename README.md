@@ -1,18 +1,18 @@
 # Dames
 Projet de groupe de fin d'année en Java
 
-Version actuelle : 1.5.1
+[06/06/18]
+Version actuelle : 1.5.2
 
 Avancement actuel :
-  - affichage du plateau & des pions mangés
-  - déplacement des pions sur le plateau en cliquant dessus
-  - début de la logique du jeu
+  - affichage du plateau & des pions mangés avec les nouveaux sprites
   
  En cours :
   - logique de jeu
   - menu
-  - modif des sprites
   
 Reste à faire :
-  - algo IA
+  - algo IA ?
   - fonctionnalités secondaires diverses (skin, musique, crédits, ou que sais-je)
+  
+ [06/06/18] : Joyeux anniversaire Mayssoun ! :D
