@@ -161,7 +161,7 @@ public class Plateau extends JPanel implements MouseListener{
                         System.out.println(coord[0] + ", " + coord[1]);
                     }
                 }catch (NullPointerException ex){
-                    System.out.println("Pas de moves possibles");
+                    System.out.println("Pas de moves possibles");       // ?
                 }
             }
 
@@ -236,7 +236,7 @@ public class Plateau extends JPanel implements MouseListener{
             int[][] coord;      // null
             int cmpt = 0;
 
-            // pion
+            // --- pion ---
             if (!this.matrice[c][l].isDame()) {
                 coord = new int[2][2];      // 2 possibilités de déplacement max pour un pion
 
@@ -278,10 +278,11 @@ public class Plateau extends JPanel implements MouseListener{
                 }
 
             }
-            // dame
+
+            // --- dame ---
             else {
                 coord = new int[18][2];
-                int i=0;
+                int i=1;
 
                 // diag haut-gauche
                 while(c-i>=0 && l-i>=0){        // tant qu'on est dans le plateau
@@ -295,7 +296,7 @@ public class Plateau extends JPanel implements MouseListener{
                     }
                 }
 
-                i=0;        // reset le compteur
+                i=1;        // reset le compteur
                 // diag haut-droit
                 while(c+i<10 && l-i>=0){
                     if (this.matrice[c+i][l-i]==null){
@@ -308,9 +309,9 @@ public class Plateau extends JPanel implements MouseListener{
                     }
                 }
 
-                i=0;        // reset le compteur
+                i=1;        // reset le compteur
                 // diag bas-droit
-                while(c+i<8 && l+i<10){
+                while(c+i<10 && l+i<10){
                     if (this.matrice[c+i][l+i]==null){
                         coord[cmpt][0] = c+i;
                         coord[cmpt][1] = l+i;
@@ -321,7 +322,7 @@ public class Plateau extends JPanel implements MouseListener{
                     }
                 }
 
-                i=0;
+                i=1;
                 // diag bas-gauche
                 while(c-i>=0 && l+i<10){
                     if (this.matrice[c-i][l+i]==null){
@@ -334,10 +335,11 @@ public class Plateau extends JPanel implements MouseListener{
                     }
                 }
             }
+
             return Arrays.copyOf(coord, cmpt);  // "coupe" le tableau pour avoir uniquement les valeurs utiles
 
         }else{
-            System.out.println("Oups");
+            System.out.println("Oups, pas de pion dans cette case, mauvais appel de la fonction canMove !");
             return null;
         }
     }
