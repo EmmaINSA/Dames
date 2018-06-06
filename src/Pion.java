@@ -77,7 +77,11 @@ public class Pion {
      * */
     public void setDame() {
         this.dame = true;
-        // load sprite ?
+        try {
+            this.sprite = ImageIO.read(new File((this.isWhite()) ? "Files/dame_B.png" : "Files/dame_N.png"));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 
