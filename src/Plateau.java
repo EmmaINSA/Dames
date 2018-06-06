@@ -55,29 +55,6 @@ public class Plateau extends JPanel implements MouseListener{
         this.addMouseListener(this);        // pour récupérer les clics & co
     }
 
-
-
-    /**
-     * Actualise la position d'un pion dans la matrice
-     * ET dans ses coordonnées perso
-     * */
-    public void bougePion(int[] depart, int[] arrivee){
-        matrice[arrivee[0]][arrivee[1]] = matrice[depart[0]][depart[1]];    // on copie le pion dans la case cible
-        matrice[depart[0]][depart[1]] = null;   // on vide la case de depart
-        matrice[arrivee[0]][arrivee[1]].setPos(arrivee);
-        this.repaint();
-//        System.out.println(this.dansCampAdverse(matrice[arrivee[1]][arrivee[0]], arrivee));
-    }
-
-    /**
-     * --- A ECRIRE/DEBUG ---
-     * Renvoie si le pion arrive dans le camp adverse, donc devient une dame
-     * */
-    public boolean dansCampAdverse(Pion pion, int[] coord){
-//        return (pion.isWhite() && coord[1]==0)||(!pion.isWhite() && coord[1]==9);
-        return false;
-    }
-
     /**
      * Initialise le plateau avec les pions au bon endroit
      * @since 1.1
@@ -102,28 +79,63 @@ public class Plateau extends JPanel implements MouseListener{
             }
         }
 
-        this.matrice[2][3].setDame();
-       /* // --- TEST ---
-        // noirs
-        this.mangePion(0,1);
-        this.mangePion(0,3);
-        this.mangePion(0,5);
-        this.mangePion(0,7);
-        this.mangePion(0,9);
-        this.mangePion(1,0);
-        this.mangePion(1,2);
-        this.mangePion(1,4);
-        this.mangePion(1,6);
-        // blancs
-        this.mangePion(6,1);
-        this.mangePion(6,3);
-        this.mangePion(6,5);
-        this.mangePion(6,7);
-        this.mangePion(6,9);
-        this.mangePion(7,0);
-        this.mangePion(7,2);
-        this.mangePion(7,4);
-        this.mangePion(7,6);*/
+        /* ------
+        TEST ZONE
+        ---------*/
+
+
+//        this.matrice[2][3].setDame();
+        // prise obligatoire pions
+        this.bougePion(6,3,7,4);
+        this.bougePion(9,6,8,5);
+
+        int [][] PO = this.formatePO(this.priseObligatoire());      // pour pas recalculer
+        System.out.println("Prise obligatoire :");
+        for (int i=0; i<PO.length; i++){
+            System.out.println("Pion n°"+i+" : ");
+            for (int j=0; j<PO[i].length; j++){
+                System.out.print(Integer.toString(PO[i][j])+", ");
+            }
+        }
+
+/*        // dansCampAdverse -> OK
+        this.mangePion(5,0);
+        this.bougePion(7,6,5,0);
+        System.out.println(this.dansCampAdverse(5,0));*/
+    }
+
+    /**
+     * Actualise la position d'un pion dans la matrice
+     * ET dans ses coordonnées perso
+     * */
+    public void bougePion(int[] depart, int[] arrivee){
+        matrice[arrivee[0]][arrivee[1]] = matrice[depart[0]][depart[1]];    // on copie le pion dans la case cible
+        matrice[depart[0]][depart[1]] = null;   // on vide la case de depart
+        matrice[arrivee[0]][arrivee[1]].setPos(arrivee);
+        this.repaint();
+//        System.out.println(this.dansCampAdverse(matrice[arrivee[1]][arrivee[0]], arrivee));
+    }
+
+    public void bougePion(int cdepart, int ldepart, int carrivee, int larrivee){
+        matrice[carrivee][larrivee] = matrice[cdepart][ldepart];    // on copie le pion dans la case cible
+        matrice[cdepart][ldepart] = null;   // on vide la case de depart
+        matrice[carrivee][larrivee].setPos(new int[] {carrivee, larrivee});
+        this.repaint();
+//        System.out.println(this.dansCampAdverse(matrice[arrivee[1]][arrivee[0]], arrivee));
+    }
+
+
+    /**
+     * --- A ECRIRE/DEBUG ---
+     * Renvoie si le pion arrive dans le camp adverse, donc devient une dame
+     * */
+    public boolean dansCampAdverse(int c, int l){
+        if (this.matrice[c][l]!=null) {
+            return (this.matrice[c][l].isWhite() && l == 0) || (!this.matrice[c][l].isWhite() && l == 9);
+        }else{
+            System.out.println("Oups ! Pas de pion en "+c+", "+l+" pour la fonction dansCampAdverse !");
+            return false;
+        }
     }
 
 
@@ -131,10 +143,7 @@ public class Plateau extends JPanel implements MouseListener{
      * MouseListener
      * @since 1.2
      * */
-    public void mouseClicked(MouseEvent e){/*   // debug
-        int[] coord = caseClic(e.getY(), e.getX());
-        System.out.println(Integer.toString(valeursCases[coord[0]][coord[1]]));*/
-    }
+    public void mouseClicked(MouseEvent e){}
     public void mousePressed(MouseEvent e){}
     public void mouseEntered(MouseEvent e){}
     public void mouseExited(MouseEvent e){}
@@ -391,7 +400,7 @@ public class Plateau extends JPanel implements MouseListener{
 
 
     private boolean jeuFini(){
-        return (nbPionBmourus==20 || nbPionNmourus==20);
+        return (nbPionBmourus>=20 || nbPionNmourus>=20);        // on sait jamais
     }
 
 
@@ -520,12 +529,14 @@ public class Plateau extends JPanel implements MouseListener{
         return coord;
     }
 
-    /**
-     * @author Ian
-     * renvoie un tableau contenant les toutes les prises obligatoire du tour mis en parametre
-     *
-     * */
-
+    // utile
+    private int[][] formatePO(int[][] PO){
+        int i=0;
+        while(PO[i][0]!=10){
+            i++;
+        }
+        return Arrays.copyOf(PO, i);
+    }
 
 
     // ---------------------
