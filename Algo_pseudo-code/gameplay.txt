@@ -2,6 +2,7 @@ Pseudo-code gameplay :
 
 idées : 
 	- bouton pour activer/désactiver les aides ?
+	- écrire priseObligatoire(pion)
 
 -------------------------------------------
 Fonction appelée quand l'utilisateur clique
@@ -9,34 +10,39 @@ Fonction appelée quand l'utilisateur clique
 	
 Si clic dans plateau:
 	Si pas de pion sélectionné:
-		Si clic sur pion qui peut bouger :
+		Si priseObligatoire() not null:
+			Si clic sur case de priseObligatoire:
+				sélectionner pion
+				mouvements possibles = priseObligatoire(pion)
+				PO = true
+		
+		
+		Sinon si clic sur pion à soi :
 			sélectionner pion
 			erreurs=0
-			Si priseObligatoire() not null:		// on a pas encore sélectionné de pion, on teste du coup si il y a prise obligatoire
-				mouvements possibles = priseObligatoire()
-				(bool) prise obligatoire = true
-			Sinon:
-				mouvements possibles = canMove()
+			mouvements possibles = canMove(pion)
 
 		Sinon:		// on a cliqué comme de la m*rde
 			erreurs ++
+			
+			
 			
 	Sinon (si pion sélectionné):
 		Si clic dans mouvements possibles:		// on déplace le pion
 			déplacer pion
 			
-			Si (bool) prise obligatoire:
+			Si PO:		// si on a pris un pion
 				manger pion adverse
-				Si PriseObligatoire() not null:		// il faut continuer la prise
+				Si PriseObligatoire(nouvelle position) not null:		// il faut continuer la prise
 					sélectionné = nouvelle position
-					mouvements possibles = priseObligatoire()
+					mouvements possibles = priseObligatoire(sélectionné)
 				Sinon:
-					(bool) prise obligatoire = false
+					PO = false
 					déselectionner le pion
-					actualiseTour(pion joué)
+					actualiseTour(nouvelle pos)
 			Sinon:
 				déselectionner le pion
-				actualiseTour
+				actualiseTour(nouvelle pos)
 
 		Sinon:
 			erreurs++
@@ -55,14 +61,13 @@ erreurs = 0
 Si pion joué arrive au fond:
 	dame(pion)
 
+tour = ! tour		// pour utiliser les fonctions
+	
 Si JcJ :
-	tour = ! tour
 	affichageTourJcJ()
 Sinon (si IA):
 	affichageTourJvIA()
 	tourIA()
-	
-
 	
 	
 --------------
@@ -86,6 +91,7 @@ si animation:		// changement de tour,...
 ----
 aide
 ----
+
 Si sélectionné is not null:
 	Si prise obligatoire:
 		halo rouge sur pion(s) à prendre
@@ -97,6 +103,20 @@ Sinon :
 	Si prise obligatoire:
 		halo jaune sur les pions à jouer
 	Sinon: 
-		halo vert sur les pions joua
+		halo vert sur les pions jouables
 	
+
+-----------------------
+priseObligatoire (dame)
+-----------------------
+
+Pour chaque diago :
+
+Tant qu'on ne sort pas du plateau-1 (cases aux bords en moins):
+	Si case observée contient un pion:
+		Si pion adverse & case derrière libre:
+			coord = ...
+		Break
+	Sinon:
+		dist ++		// on regarde 1 case + loin
 
