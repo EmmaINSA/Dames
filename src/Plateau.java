@@ -103,10 +103,16 @@ public class Plateau extends JPanel implements MouseListener{
             }
         }
 
-/*        // dansCampAdverse -> OK
-        this.mangePion(5,0);
-        this.bougePion(7,6,5,0);
-        System.out.println(this.dansCampAdverse(5,0));*/
+        // PO solo : OK
+        System.out.println("PO 7,6");
+        for (int[] pos:priseObligatoire(7,6)){
+            System.out.println(pos[0]+" "+pos[1]);
+        }
+        System.out.println("PO 9,6");
+        for (int[] pos:priseObligatoire(9,6)){
+            System.out.println(pos[0]+" "+pos[1]);
+        }
+
     }
 
     /**
@@ -416,9 +422,14 @@ public class Plateau extends JPanel implements MouseListener{
                 positions = 0;
                 if (this.matrice[c][l] != null){     // si il y a un pion (sinon NullPointerException)
                     if (this.matrice[c][l].isWhite()==this.tour){    // si c'est le pion du joueur
-                        //pion
+
+                        /* ---
+                        * Pion
+                        * ----
+                        * */
                         if ( ! this.matrice[c][l].isDame()){
-                            //blancs
+
+                            // --- blancs ---
                             if (this.matrice[c][l].isWhite()){
                                 // haut-gauche
                                 if (c-2>=0 && l-2>=0){      // si on ne sort pas du platal
@@ -456,7 +467,7 @@ public class Plateau extends JPanel implements MouseListener{
                                 }
                             }
 
-                            // noirs
+                            // --- noirs ---
                             else{
                                 // bas-gauche
                                 if (c-2>=0 && l+2<10){  //
@@ -494,8 +505,12 @@ public class Plateau extends JPanel implements MouseListener{
                                 }
                             }
 
-                        /* ICI PROBLEME */
                         }else{      // si c'est une dame
+                            /* ---
+                            * Dame
+                            * ----
+                            * */
+
                             int dist = 1;
 
                             // diago haut-gauche
@@ -596,6 +611,161 @@ public class Plateau extends JPanel implements MouseListener{
             }
         }
         return coord;
+    }
+
+    private int[][] priseObligatoire(int c, int l){
+        if (this.matrice[c][l]==null){
+            System.out.println("Oups ! pas de pion par ici pour PO !");
+            return null;
+
+        }else{
+            if (this.matrice[c][l].isWhite() == tour){
+                int positions = 0;
+
+                /*
+                * ----
+                * Dame
+                * ----
+                * */
+                if (this.matrice[c][l].isDame()){
+
+                    int[][] coord = new int[4][2];
+
+                    int dist = 1;
+
+                    // diago haut-gauche
+                    while(c-dist>0 && l-dist>0){    // la case derrière celle considérée ne dépasse pas du platal
+                        if(this.matrice[c-dist][l-dist]!=null){ // on a trouvé un pion
+                            if (this.matrice[c-dist][l-dist].isWhite()!=this.tour && this.matrice[c-dist-1][l-dist-1]==null){
+                                // pion adverse & case derrière libre
+                                coord[0][0]=c-dist-1;
+                                coord[0][1]=l-dist-1;
+                                positions++;
+                            }
+                            break;
+                        }else {
+                            dist++;
+                        }
+                    }
+
+                    // diago haut-droit
+                    dist=1;
+                    while(c+dist<9 && l-dist>0) {    // la case derrière celle considérée ne dépasse pas du platal
+
+                        if (this.matrice[c + dist][l - dist] != null) { // on a trouvé un pion
+                            if (this.matrice[c + dist][l - dist].isWhite() != this.tour && this.matrice[c + dist + 1][l - dist - 1] == null) {
+                                // pion adverse & case derrière libre
+                                coord[positions][0]=c+dist+1;
+                                coord[positions][1]=l-dist-1;
+                                positions++;
+                            }
+                            break;
+                        } else {
+                            dist++;
+                        }
+                    }
+
+                    // diago bas-droit
+                    dist=1;
+                    while(c+dist<9 && l+dist<9){    // la case derrière celle considérée ne dépasse pas du platal
+                        if(this.matrice[c+dist][l+dist]!=null){ // on a trouvé un pion
+                            if (this.matrice[c+dist][l+dist].isWhite()!=this.tour && this.matrice[c+dist+1][l+dist+1]==null){
+                                // pion adverse & case derrière libre
+                                coord[positions][0]=c+dist+1;
+                                coord[positions][1]=l+dist+1;
+                                positions++;
+                            }
+                            break;
+                        }else {
+                            dist++;
+                        }
+                    }
+
+                    // diago bas-gauche
+                    dist=1;
+                    while(c-dist>0 && l+dist<9){    // la case derrière celle considérée ne dépasse pas du platal
+
+                        if(this.matrice[c-dist][l+dist]!=null){ // on a trouvé un pion
+                            if (this.matrice[c-dist][l+dist].isWhite()!=this.tour && this.matrice[c-dist-1][l+dist+1]==null){
+                                // pion adverse & case derrière libre
+                                coord[positions][0]=c-dist-1;
+                                coord[positions][1]=l+dist+1;
+                            }
+                            break;
+                        }else {
+                            dist++;
+                        }
+                    }
+
+                    return Arrays.copyOf(coord, positions);     // c'est bien + pratique
+
+
+                }else { // pion
+                    /*
+                    * ----
+                    * Pion
+                    * ----
+                    * */
+                    int[][] coord = new int[2][2];
+
+                    //blancs
+                    if (this.matrice[c][l].isWhite()){
+                        // haut-gauche
+                        if (c-2>=0 && l-2>=0){      // si on ne sort pas du platal
+                            if(this.matrice[c-1][l-1]!=null){
+                                if (this.matrice[c-1][l-1].isWhite()!=this.tour && this.matrice[c-2][l-2]==null){       // on peut manger
+                                    coord[positions][0]=c-2;
+                                    coord[positions][1]=l-2;
+                                    positions++;
+                                }
+                            }
+                        }
+
+                        // haut-droit
+                        if (c+2<10 && l-2>=0){
+                            if(this.matrice[c+1][l-1]!=null){
+                                if (this.matrice[c+1][l-1].isWhite()!=this.tour && this.matrice[c+2][l-2]==null){       // on peut manger
+                                    coord[positions][0]=c+2;
+                                    coord[positions][1]=l-2;
+                                    positions++;
+                                }
+                            }
+                        }
+                    }
+
+                    // noirs
+                    else{
+                        // bas-gauche
+                        if (c-2>=0 && l+2<10){
+                            if(this.matrice[c-1][l+1]!=null){
+                                if (this.matrice[c-1][l+1].isWhite()!=this.tour && this.matrice[c-2][l+2]==null){       // on peut manger
+                                    coord[positions][0]=c-2;
+                                    coord[positions][1]=l+2;
+                                    positions++;
+                                }
+                            }
+                        }
+
+                        // bas-droit
+                        if (c+2<10 && l+2<10){
+                            if(this.matrice[c+1][l+1]!=null){
+                                if (this.matrice[c+1][l+1].isWhite()!=this.tour && this.matrice[c+2][l+2]==null){       // on peut manger
+                                    coord[positions][0]=c+2;
+                                    coord[positions][1]=l+2;
+                                    positions++;
+                                    }
+                                }
+                            }
+                        }
+                    return Arrays.copyOf(coord, positions);
+                    }
+
+
+                } else {        // si on a appelé PO pour un pion adverse (but why tho ?)
+                    System.out.println("Pas touche au pion adverse ! (PO)");
+                    return null;
+            }
+        }
     }
 
 
