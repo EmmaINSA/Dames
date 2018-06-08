@@ -21,20 +21,23 @@ import java.util.Arrays;
 public class Plateau extends JPanel implements MouseListener{
 
     private Pion[][] matrice = new Pion[10][10];      // 10x10
-    private boolean tour = true;    // actualisé à chaque tour, true = blanc, false = noir
+    private boolean tour = true,        // actualisé à chaque tour, true = blanc, false = noir
+            PO=false;
     private Image sprite, selectedSprite;
 
     private final int[] POSPREMIERPION = {50,50};
-    private final int TAILLECASE = 60, PIONSPARLIGNE=7, NBERREURS=3;        // avec le pixel de bordure
+    private final int TAILLECASE = 60,      // avec le pixel de bordure
+            PIONSPARLIGNE=7, NBERREURS=3;
     private final int TAILLEPLATAL = POSPREMIERPION[0]*2+10*TAILLECASE;
 
 
     private int[] selected = null;  // coord du pion sélectionné
+    private int[][] mvtsPossibles = null;
 
     private Pion[] pionBmourus = new Pion[20], pionNmourus= new Pion[20];   // pour afficher les pions mangés sur le bord
     private int nbPionBmourus = 0, nbPionNmourus = 0, erreurs=0;
 
-    // "poids" des cases : + la case est au bord, + elle est intéressante (défendre/faire une dame, position imprenable)
+/*    // "poids" des cases : + la case est au bord, + elle est intéressante (défendre/faire une dame, position imprenable)
     // -- fun fact -- : matrice symétrique ! (codée avec les colonnes du plateau en ligne et pourtant même résultat final)
     // fonctionne
     private int[][] valeursCases = {
@@ -47,7 +50,7 @@ public class Plateau extends JPanel implements MouseListener{
             {0,4,0,2,0,2,0,3,0,5},
             {5,0,3,0,3,0,3,0,4,0},
             {0,4,0,4,0,4,0,4,0,5},
-            {5,0,5,0,5,0,5,0,5,0}};    // hardcode ftw
+            {5,0,5,0,5,0,5,0,5,0}};    // hardcode ftw*/
 
 
     Plateau(){
@@ -83,18 +86,13 @@ public class Plateau extends JPanel implements MouseListener{
         TEST ZONE
         ---------*/
 
-
-//        this.matrice[2][3].setDame();
-        // prise obligatoire pions
-//        this.bougePion(6,3,7,4);
-//        this.bougePion(9,6,8,5);
-
         // PO dame
         this.matrice[7][6].setDame();
         this.bougePion(4,3,5,4);
         this.bougePion(8,3,8,5);
 
-        int [][] PO = this.formatePO(this.priseObligatoire());      // pour pas recalculer
+//        int [][] PO = this.formatePO(this.priseObligatoire());      // pour pas recalculer
+        int[][] PO = this.priseObligatoire();
         System.out.println("Prise obligatoire :");
         for (int i=0; i<PO.length; i++){
             System.out.println("Pion n°"+i+" : ");
@@ -124,7 +122,6 @@ public class Plateau extends JPanel implements MouseListener{
         matrice[cdepart][ldepart] = null;   // on vide la case de depart
         matrice[carrivee][larrivee].setPos(new int[] {carrivee, larrivee});
         this.repaint();
-//        System.out.println(this.dansCampAdverse(matrice[arrivee[1]][arrivee[0]], arrivee));
     }
 
 
@@ -164,40 +161,123 @@ public class Plateau extends JPanel implements MouseListener{
 
             int c = this.caseClic(x,y)[0];
             int l = this.caseClic(x,y)[1];
+
             System.out.println("Coord clic : "+c+", "+l);
 
-            if (this.matrice[c][l]!= null){
-                System.out.println("Moves possibles :");
-                try {
-                    for (int[] coord : canMove(c, l)) {
-                        System.out.println(coord[0] + ", " + coord[1]);
+            if (selected==null){        // on a pas encore sélectionné de pion
+                if (priseObligatoire()!=null){
+
+                    // affichage
+                    int[][] casesPO = priseObligatoire();
+                    System.out.println("PO() :");
+                    for (int j=0; j<casesPO.length; j++){
+                        System.out.print("(");
+                        for(int k=0; k<casesPO[j].length; k++){
+                            System.out.print(casesPO[j][k]+",");
+                        }
+                        System.out.print(")\n");
                     }
-                }catch (NullPointerException ex){
-                    System.out.println("Pas de moves possibles");       // ?
+
+                    if (this.dansPO(c,l)){
+                        selected = new int[] {c,l};
+                        mvtsPossibles = priseObligatoire(c,l);
+                        this.PO = true;
+                        erreurs = 0;
+                    }else {
+                        erreurs++;
+                        System.out.println("PO, merci de choisir le bon pion !");
+                    }
+                }else if (matrice[c][l]!=null){     // si pas de PO
+                    if (matrice[c][l].isWhite()==tour && canMove(c,l)!=null){       // si clic sur pion à soi qui peut bouger
+                        selected = new int[] {c,l};
+                        erreurs = 0;
+                        mvtsPossibles = canMove(c,l);
+                    }else {
+                        erreurs++;
+                        System.out.println("Mauvais choix de pion");
+                    }
+                }else {
+                    erreurs++;
+                    System.out.println("Merci de cliquer sur un pion !");
+                }
+
+            }else{      // pion déjà sélectionné
+                if (dansMvtsPossibles(c,l)){
+                    System.out.println("Clic dans mvts possibles");
+                    bougePion(selected[0], selected[1], c,l);       // on déplace le pion
+                    if (PO){        // si on a mangé un pion
+                        mangePion(selected[0], selected[1],c,l);        // on mange le pion
+
+                        if (priseObligatoire(c,l)!=null){      // s'il faut encore manger des pions
+
+                            int[][] casesPO = priseObligatoire(c,l);
+                            System.out.println("PO après prise : ");
+                            // affichage PO
+                            for (int j=0; j<casesPO.length; j++){
+                                System.out.print("("+casesPO[j][0]+", "+casesPO[j][1]+")");
+                            }
+
+                            selected = new int[] {c,l};
+                            mvtsPossibles = priseObligatoire(c,l);
+                        }else {     // plus de pions à manger, fin du tour
+                            selected=null;
+                            PO=false;
+                            actualiseTour(c,l);
+                        }
+                    }else{
+                        selected=null;
+                        actualiseTour(c,l);
+                    }
+                }else{      // on a pas cliqué sur un mouvement possible
+                    if (c==selected[0] && l==selected[1]){
+                        selected = null;
+                    }else {
+                        erreurs++;
+                        System.out.println("Déplacement impossible");
+                    }
                 }
             }
-
-/*
-
-*/
-
-           /* if(this.pionDansCase(caseClic[0],caseClic[1]) && this.selected==null){
-//                if(this.canMove(caseClic)) -> L'idéal
-                    this.selected=caseClic;
-            }else if (this.selected!=null && this.canMove(selected, caseClic)){
-                this.bougePion(selected, caseClic);
-                System.out.println("nb pions\nblancs:"+nbPions(true)+"\nnoirs : "+nbPions(false));
-                this.selected = null;
-            }*/
         }
 
         this.repaint();
     }
 
+    private boolean dansMvtsPossibles(int c, int l){
+        int[][] mvts = mvtsPossibles;
+        System.out.println("mvts possibles de la case "+selected[0]+", "+selected[1]);
+        for (int i=0; i<mvts.length; i++){
+            System.out.print("("+mvts[i][0]+", "+mvts[i][1]+")");
+            if (mvts[i][0]==c && mvts[i][1]==l){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void actualiseTour(int carrivee, int larrivee){
+        if (jeuFini()){
+            finJeu();
+        }
+        erreurs=0;
+        if (dansCampAdverse(carrivee,larrivee)){
+            matrice[carrivee][larrivee].setDame();
+        }
+
+        PO = false;
+        tour=!tour;
+
+
+        System.out.println("Changement de tour !");
+    }
+
+    private void finJeu(){
+        // à compléter : changer de panel ?
+    }
+
     /**
      * Update le platal quand on mange un pion
      * */
-    private void mangePion(int l, int c){
+    private void mangePion(int c, int l){
         if (this.matrice[c][l]!=null) {
             if (this.matrice[c][l].isWhite()) {
                 this.pionBmourus[this.nbPionBmourus] = this.matrice[c][l];
@@ -211,6 +291,24 @@ public class Plateau extends JPanel implements MouseListener{
             System.out.println("Oups, on ne peut pas manger de pion à la case "+Integer.toString(l)+", "+Integer.toString(c));
         }
         this.repaint();
+    }
+
+
+    private void mangePion(int cdepart, int ldepart, int carrivee, int larrivee){
+        if (! matrice[carrivee][larrivee].isDame()){      // pion a mangé
+            mangePion((cdepart+carrivee)/2, (ldepart+larrivee)/2);      // pion mangé à la moyenne des coords du déplacement
+        }else{      // dame : + rigolo
+            if (carrivee<cdepart && larrivee<ldepart){      // HG
+                mangePion(carrivee+1, larrivee+1);
+            }else if (carrivee<cdepart && larrivee>ldepart){        // BG
+                mangePion(carrivee+1, larrivee-1);
+            }else if (carrivee>cdepart && larrivee<ldepart){        // HD
+                System.out.println("Mangepion HD dame");
+                mangePion(carrivee-1, larrivee+1);
+            }else {
+                mangePion(carrivee-1, larrivee-1);      // BD
+            }
+        }
     }
 
     private int nbPions(boolean couleur){
@@ -409,20 +507,12 @@ public class Plateau extends JPanel implements MouseListener{
         int pions=0, positions;       // compte le nb de pions avec prise obligatoire
         // et pour chacun (reset) le nb de positions possibles
 
-/*        // initialisation du tableau à 10, valeur d'arrêt de la lecture du tableau
-        // à enlever ?
-        for (int a=0; a<20;a++){
-            for (int b=0; b<10 ; b++){
-                coord[a][b]=10;
-            }
-        }*/
-
         for (int c=0; c<10; c++){      // opti du parcours de la matrice (uniquement cases jouables)
             for (int l=(c+1)%2; l<10; l+=2){    // same
-                positions = 0;
                 if (this.matrice[c][l] != null){     // si il y a un pion (sinon NullPointerException)
                     if (this.matrice[c][l].isWhite()==this.tour){    // si c'est le pion du joueur
 
+                        positions=0;
                         /* ---
                         * Pion
                         * ----
@@ -453,6 +543,7 @@ public class Plateau extends JPanel implements MouseListener{
                                                 coord[pions][1]=l;
                                                 coord[pions][2]=c+2;
                                                 coord[pions][3]=l-2;
+                                                positions++;
                                             }else {
                                                 coord[pions][positions * 4] = c + 2;
                                                 coord[pions][positions * 4 + 1] = l - 2;
@@ -491,6 +582,7 @@ public class Plateau extends JPanel implements MouseListener{
                                                 coord[pions][1]=l;
                                                 coord[pions][2]=c+2;
                                                 coord[pions][3]=l+2;
+                                                positions++;
                                             }else {
                                                 coord[pions][positions * 4] = c + 2;
                                                 coord[pions][positions * 4 + 1] = l + 2;
@@ -542,6 +634,7 @@ public class Plateau extends JPanel implements MouseListener{
                                             coord[pions][1]=l;
                                             coord[pions][2]=c+dist+1;
                                             coord[pions][3]=l-dist-1;
+                                            positions++;
                                         }else {
                                             coord[pions][positions * 4] = c+dist+1;
                                             coord[pions][positions * 4 + 1] = l-dist-1;
@@ -565,6 +658,7 @@ public class Plateau extends JPanel implements MouseListener{
                                             coord[pions][1]=l;
                                             coord[pions][2]=c+dist+1;
                                             coord[pions][3]=l+dist+1;
+                                            positions++;
                                         }else {
                                             coord[pions][positions * 4] = c+dist+1;
                                             coord[pions][positions * 4 + 1] = l+dist+1;
@@ -589,6 +683,7 @@ public class Plateau extends JPanel implements MouseListener{
                                             coord[pions][1]=l;
                                             coord[pions][2]=c-dist-1;
                                             coord[pions][3]=l+dist+1;
+                                            positions++;
                                         }else {
                                             coord[pions][positions * 4] = c-dist-1;
                                             coord[pions][positions * 4 + 1] = l+dist+1;
@@ -605,22 +700,25 @@ public class Plateau extends JPanel implements MouseListener{
                                 pions++;
                             }
                         }
-                        positions=0;        // reset du nombre de positions comme on change de pion
                     }
                 }
             }
         }
-        return coord;
+        if (pions>0) {
+            return coord;
+        }else{
+            return null;
+        }
     }
 
     private int[][] priseObligatoire(int c, int l){
         if (this.matrice[c][l]==null){
             System.out.println("Oups ! pas de pion par ici pour PO !");
             return null;
-
         }else{
             if (this.matrice[c][l].isWhite() == tour){
                 int positions = 0;
+                int[][] coord = null;
 
                 /*
                 * ----
@@ -629,7 +727,7 @@ public class Plateau extends JPanel implements MouseListener{
                 * */
                 if (this.matrice[c][l].isDame()){
 
-                    int[][] coord = new int[4][2];
+                    coord = new int[4][2];
 
                     int dist = 1;
 
@@ -697,16 +795,16 @@ public class Plateau extends JPanel implements MouseListener{
                         }
                     }
 
-                    return Arrays.copyOf(coord, positions);     // c'est bien + pratique
-
-
                 }else { // pion
+
                     /*
                     * ----
                     * Pion
                     * ----
                     * */
-                    int[][] coord = new int[2][2];
+
+
+                    coord = new int[2][2];
 
                     //blancs
                     if (this.matrice[c][l].isWhite()){
@@ -757,9 +855,12 @@ public class Plateau extends JPanel implements MouseListener{
                                 }
                             }
                         }
-                    return Arrays.copyOf(coord, positions);
                     }
-
+                    if (positions>0)
+                        return Arrays.copyOf(coord, positions);
+                    else {
+                        return null;
+                    }
 
                 } else {        // si on a appelé PO pour un pion adverse (but why tho ?)
                     System.out.println("Pas touche au pion adverse ! (PO)");
@@ -771,14 +872,27 @@ public class Plateau extends JPanel implements MouseListener{
 
     // utile
     private int[][] formatePO(int[][] PO){
-        int i=0;
-        while(PO[i][0]!=0 || PO[i][1]!=0){
-            i++;
+        if (PO!=null) {
+            int i = 0;
+            while (PO[i][0] != 0 || PO[i][1] != 0) {
+                i++;
+            }
+            return Arrays.copyOf(PO, i);
+        }else {
+            return null;
         }
-        return Arrays.copyOf(PO, i);
     }
 
 
+    private boolean dansPO(int c, int l){
+        int[][] PO = this.priseObligatoire();       // pour pas recalculer
+        for (int i=0; i<PO.length; i++){
+            if (PO[i][0]==c && PO[i][1]==l){        // si le pion demandé est dans la liste des PO
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Le joyeux bazar de l'affichage --- RIP smiley 2018-2018 ---
