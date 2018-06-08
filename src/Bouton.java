@@ -6,20 +6,18 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 
-
+/**
+ * Classe qui gère le bouton JcJ (et aurait pu gérer le bouton JvIA s'il y avait une IA)
+ * @version 2.0.0
+ * @see Menu
+ * @see PanelMenu
+ * */
 public class Bouton extends JButton implements MouseListener {
 
     private String fonction;
     private ImageIcon sprite_normal;
     private ImageIcon sprite_hovered;
-    private int x = 100;
-    private int y = 50;
-    private int width = 500;
-    private int height = 80;
     private Menu menu;
-
-    private Image imagetest;
-
 
     Bouton(String fonction, Menu menu) {
         super();
@@ -30,7 +28,6 @@ public class Bouton extends JButton implements MouseListener {
     private void init(String fonction) {
         this.fonction = fonction;
         if (fonction.equals("JcJ")) {
-            this.y = 100;
             try{
                 this.sprite_normal = new ImageIcon(ImageIO.read(new File("Files/JcJ.png")));
                 this.sprite_hovered = new ImageIcon(ImageIO.read(new File("Files/JcJ_hover.png")));
@@ -39,7 +36,6 @@ public class Bouton extends JButton implements MouseListener {
             }
 
         } else if (fonction.equals("IA")) {
-            this.y = 300;
             try{
                 this.sprite_normal = new ImageIcon(ImageIO.read(new File("Files/JvIA.png")));
                 this.sprite_hovered = new ImageIcon(ImageIO.read(new File("Files/JvIA_hover.png")));
@@ -50,44 +46,26 @@ public class Bouton extends JButton implements MouseListener {
         addMouseListener(this);
         this.setIcon(this.sprite_normal);
         this.setMargin(new Insets(0, 0, 0, 0)); // vire les bordures
-        this.setLocation(50,500);       // 何 ??
         this.setFocusPainted(false);
-
-        try{
-            this.imagetest = ImageIO.read(new File("Files/JcJ.png"));
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-
-//        System.out.println(this.tailleSprite()[0]+" "+this.tailleSprite()[1]);
     }
 
 
     public void mouseClicked(MouseEvent event) { }
 
     public void mouseEntered(MouseEvent event) {
-//        System.out.println("Enter");
         this.setIcon(this.sprite_hovered);
         this.repaint();
     }
 
     public void mouseExited(MouseEvent event) {
-//        System.out.println("Exit");
         this.setIcon(this.sprite_normal);
         this.repaint();
     }
 
     public void mousePressed(MouseEvent event) {
-//        Game.start(this.fonction.equals("IA"));
         FenetreJeu game = new FenetreJeu(this.fonction.equals("IA"));
-//        this.menu.kill();     // marche pas
-
     }
-
 
     public void mouseReleased(MouseEvent event) { }
 
-    public int[] tailleSprite(){
-        return new int[] {this.sprite_normal.getIconWidth(), this.sprite_normal.getIconHeight()};
-    }
 }

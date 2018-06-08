@@ -5,7 +5,7 @@ import java.io.IOException;
 
 /**
  * @author Emma
- * @version 1.4.1
+ * @version 2.0.0
  *
  * Classe utilisée pour tous les pions (dames ou non, qq soit leur couleur)
  *

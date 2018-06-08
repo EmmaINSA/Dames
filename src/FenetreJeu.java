@@ -9,15 +9,15 @@ import java.io.IOException;
  * Classe définissant la fenêtre, càd tout ce qui est en rapport
  * avec ce qui sera affiché sur la fenêtre du jeu
  * @author Emma
- * @version 1.3
+ * @version 2.0.0
  * @since 1.0
  * @see Plateau
  * */
 
 public class FenetreJeu extends JFrame{
 
-    private Plateau plateau = new Plateau();
-    private int[] size = {1000,740};     // totalement empirique mais pas dégueu : {716,740}
+    private Plateau plateau;
+    private int[] size = {1000,740};
     private int[] pos = new int[2];
     private boolean gamemode;
     private Image icone;
@@ -31,24 +31,20 @@ public class FenetreJeu extends JFrame{
         this.init(gamemode);        // gère l'initialisation de la fenetre
     }
 
-    FenetreJeu(int[] size, boolean gamemode){    // just in case
-        this.init(gamemode);
-        this.setSize(size);
-    }
-
     private void init(boolean gamemode){
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         double screenSizeWidth = screenSize.getWidth();
 
         try {
-            this.icone = ImageIO.read(new File("Files/pion_N.png"));
+            this.icone = ImageIO.read(new File("Files/icone.png"));
         }catch (IOException e){
             e.printStackTrace();
         }
 
         this.gamemode = gamemode;
-        this.setTitle("Jeu de dames");
+        this.plateau = new Plateau(gamemode);
+        this.setTitle("Daaaames son !");
         this.setSize(this.size[0],this.size[1]);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -70,9 +66,6 @@ public class FenetreJeu extends JFrame{
         this.size = size;
     }
 
-    public Plateau getPlateau(){
-        return this.plateau;
-    }
     // à remplir
 
 }
