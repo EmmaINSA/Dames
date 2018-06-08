@@ -6,8 +6,9 @@ Version actuelle : 2.0.1
 
 Avancement final :
   - menu (un peu inutile comme pas de mode IA)
+  - gameplay ok
   - nouveaux sprites, affichage de l'aide
-  - fin de jeu
+  - fin de jeu ok
  
  -> Manque juste une IA :(
   
