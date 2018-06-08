@@ -9,7 +9,7 @@ import java.io.IOException;
  * Classe définissant la fenêtre, càd tout ce qui est en rapport
  * avec ce qui sera affiché sur la fenêtre du jeu
  * @author Emma
- * @version 2.0.0
+ * @version 2.0.1
  * @since 1.0
  * @see Plateau
  * */
@@ -52,7 +52,7 @@ public class FenetreJeu extends JFrame{
         this.setPos((int)screenSizeWidth/2 - this.size[0]/2,0);
         this.setLocation(this.pos[0], this.pos[1]);    // centré et +- joli
         this.setVisible(true);
-        this.setAlwaysOnTop(false);      // parce que.
+        this.setAlwaysOnTop(false);
         this.setIconImage(this.icone);
         this.setContentPane(this.plateau);
     }
@@ -61,11 +61,5 @@ public class FenetreJeu extends JFrame{
         this.pos[0]=x;
         this.pos[1]=y;
     }
-
-    private void setSize(int[] size) {
-        this.size = size;
-    }
-
-    // à remplir
 
 }

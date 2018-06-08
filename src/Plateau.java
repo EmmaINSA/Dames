@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 /**
  * @author Emma
- * @version 2.0.0
+ * @version 2.0.1
  * Classe définissant le plateau de jeu, contenant les pions
  * ainsi que ses attributs (à définir, certainement sprite, position, les fonctions de l'affichage,
  * et les fonctions logiques du jeu)
@@ -21,8 +21,8 @@ public class Plateau extends JPanel implements MouseListener{
 
     private Pion[][] matrice = new Pion[10][10];      // 10x10
     private boolean tour = true,        // actualisé à chaque tour, true = blanc, false = noir
-            PO=false, fin = false, gamemode;
-    private Image sprite, selectedSprite, haloR, haloJ, haloB, haloV, tourB, tourN,
+            PO=false, fin = false;
+    private Image sprite, selectedSprite, haloR, haloB, tourB, tourN,
             erreur_deplacement, erreur_mvtpossible, erreur_PO, erreur_selection, spriteErreur,
             victoire_B, victoire_N;
 
@@ -39,8 +39,8 @@ public class Plateau extends JPanel implements MouseListener{
     private int nbPionBmourus = 0, nbPionNmourus = 0, erreurs=0;
 
 
-    Plateau(boolean gamemode){
-        this.initPlateau(gamemode);
+    Plateau(){
+        this.initPlateau();
         this.addMouseListener(this);        // pour récupérer les clics & co
     }
 
@@ -48,15 +48,13 @@ public class Plateau extends JPanel implements MouseListener{
      * Initialise le plateau avec les pions au bon endroit
      * @since 1.1
      * */
-    private void initPlateau(boolean gamemode){
+    private void initPlateau(){
         // chargement des sprites
         try{
             this.sprite = ImageIO.read(new File("Files/platal.png"));
             this.selectedSprite = ImageIO.read(new File("Files/selected.png"));
             this.haloB = ImageIO.read(new File("Files/halo_bleu.png"));
-            this.haloJ= ImageIO.read(new File("Files/halo_jaune.png"));
             this.haloR= ImageIO.read(new File("Files/halo_rouge.png"));
-            this.haloV= ImageIO.read(new File("Files/halo_vert.png"));
             this.tourB = ImageIO.read(new File("Files/tour_B.png"));
             this.tourN = ImageIO.read(new File("Files/tour_N.png"));
             this.erreur_deplacement = ImageIO.read(new File("Files/erreur_deplacement.png"));
@@ -68,7 +66,6 @@ public class Plateau extends JPanel implements MouseListener{
         }catch(IOException e){
             e.printStackTrace();
         }
-        this.gamemode = gamemode;
 
         // génération du plateau
         for (int i=0; i<10; i++){
@@ -82,15 +79,6 @@ public class Plateau extends JPanel implements MouseListener{
                 }
             }
         }
-
-        /*int[][] mvts = pionsBougeables();
-        for (int i=0; i<mvts.length; i++){
-            System.out.print("(");
-            for (int j=0; j<2; j++){
-                System.out.print(Integer.toString(mvts[i][j])+" ");
-            }
-            System.out.print(") ");
-        }*/
     }
 
     /**
@@ -197,7 +185,6 @@ public class Plateau extends JPanel implements MouseListener{
                     }else {
                         erreurs++;
                         spriteErreur = this.erreur_deplacement;
-//                        System.out.println("Déplacement impossible");
                     }
                 }
             }
@@ -208,9 +195,7 @@ public class Plateau extends JPanel implements MouseListener{
 
     private boolean dansMvtsPossibles(int c, int l){
         int[][] mvts = mvtsPossibles;
-//        System.out.println("mvts possibles de la case "+selected[0]+", "+selected[1]);
-        for (int i=0; i<mvts.length; i++){      // NullPointerException quand dame doit manger un pion en bas à gauche
-//            System.out.print("("+mvts[i][0]+", "+mvts[i][1]+")");
+        for (int i=0; i<mvts.length; i++){
             if (mvts[i][0]==c && mvts[i][1]==l){
                 return true;
             }
@@ -229,8 +214,6 @@ public class Plateau extends JPanel implements MouseListener{
 
         PO = false;
         tour=!tour;
-
-//        System.out.println("Changement de tour !");
     }
 
     private void finJeu(){
@@ -250,8 +233,6 @@ public class Plateau extends JPanel implements MouseListener{
                 this.nbPionNmourus++;
             }
             this.matrice[c][l] = null;
-        }else{
-//            System.out.println("Oups, on ne peut pas manger de pion à la case "+Integer.toString(l)+", "+Integer.toString(c));
         }
         this.repaint();
     }
@@ -260,13 +241,12 @@ public class Plateau extends JPanel implements MouseListener{
     private void mangePion(int cdepart, int ldepart, int carrivee, int larrivee){
         if (! matrice[carrivee][larrivee].isDame()){      // pion a mangé
             mangePion((cdepart+carrivee)/2, (ldepart+larrivee)/2);      // pion mangé à la moyenne des coords du déplacement
-        }else{      // dame : + rigolo
+        }else{      // dame
             if (carrivee<cdepart && larrivee<ldepart){      // HG
                 mangePion(carrivee+1, larrivee+1);
             }else if (carrivee<cdepart && larrivee>ldepart){        // BG
                 mangePion(carrivee+1, larrivee-1);
             }else if (carrivee>cdepart && larrivee<ldepart){        // HD
-//                System.out.println("Mangepion HD dame");
                 mangePion(carrivee-1, larrivee+1);
             }else {
                 mangePion(carrivee-1, larrivee-1);      // BD
@@ -390,7 +370,6 @@ public class Plateau extends JPanel implements MouseListener{
 
             return Arrays.copyOf(coord, cmpt);  // "coupe" le tableau pour avoir uniquement les valeurs utiles
         }else{
-//            System.out.println("Oups, pas de pion dans cette case, mauvais appel de la fonction canMove !");
             return null;
         }
     }
@@ -659,30 +638,9 @@ public class Plateau extends JPanel implements MouseListener{
         }
     }
 
-    private int[][] pionsBougeables(){
-        int[][] coord = new int[50][2] ;
-        int pos = 0;
-        for (int c=0; c<10; c++) {      // opti du parcours de la matrice (uniquement cases jouables)
-            for (int l = (c + 1) % 2; l < 10; l += 2) {    // same
-                if (matrice[c][l]!=null){
-                    if (canMove(c,l)!=null){
-                        coord[pos][0]=c;
-                        coord[pos][1]=l;
-                        pos++;
-                    }
-                }
-            }
-        }
-        if (pos>0) {
-            return Arrays.copyOf(coord, pos);
-        }else {     // ne devrait techniquement pas arriver ?
-            return null;
-        }
-    }
 
     private int[][] priseObligatoire(int c, int l){
         if (this.matrice[c][l]==null){
-//            System.out.println("Oups ! pas de pion par ici pour PO !");
             return null;
         }else{
             if (this.matrice[c][l].isWhite() == tour){
@@ -875,8 +833,7 @@ public class Plateau extends JPanel implements MouseListener{
                         return null;
                     }
 
-                } else {        // si on a appelé PO pour un pion adverse (but why tho ?)
-//                    System.out.println("Pas touche au pion adverse ! (PO)");
+                } else {
                     return null;
             }
         }
@@ -944,7 +901,6 @@ public class Plateau extends JPanel implements MouseListener{
             // le tour actuel
             g.drawImage((tour)? tourB : tourN, TAILLEPLATAL + 80, TAILLEPLATAL/2 - 16, this);
         }else{
-//            g.drawString("GG WP fin du jeu", 300,300);
             g.drawImage((!tour)? victoire_B : victoire_N, 0,0,this);
         }
     }

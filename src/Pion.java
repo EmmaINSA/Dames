@@ -5,7 +5,7 @@ import java.io.IOException;
 
 /**
  * @author Emma
- * @version 2.0.0
+ * @version 2.0.1
  *
  * Classe utilisée pour tous les pions (dames ou non, qq soit leur couleur)
  *
@@ -37,21 +37,6 @@ public class Pion {
         }
 
         int[] pos = {x,y};
-        this.setPos(pos);
-    }
-
-    Pion(boolean color, int[] pos){
-        this.setColor(color);
-
-        try{
-            if (color == BLACK) {
-                this.sprite = ImageIO.read(new File("Files/pion_N.png"));
-            }else{
-                this.sprite = ImageIO.read(new File("Files/pion_B.png"));
-            }
-        }catch (IOException e){
-            e.printStackTrace();
-        }
         this.setPos(pos);
     }
 
@@ -99,17 +84,6 @@ public class Pion {
 
     public boolean isDame() {
         return dame;
-    }
-
-    /**
-     * --- A ECRIRE SI CA VOUS FAIT PLAISIR ---
-     * Sert plus au débug qu'autre chose (on va pas print les pions hein)
-     * @return str
-     * */
-    @Override
-    public String toString() {
-        String str = super.toString();  // à modifier si vous avez des idées
-        return str;
     }
 
     /**

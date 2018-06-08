@@ -6,7 +6,7 @@ import java.io.IOException;
 
 /**
  * Classe qui gère le panneau du menu
- * @version 2.0.0
+ * @version 2.0.1
  * */
 
 public class PanelMenu extends JPanel {
@@ -40,7 +40,7 @@ public class PanelMenu extends JPanel {
 //        this.add(this.boutonVsIA);
     }
 
-    // gère les marges -> à définir en fonction de la taille de la fenêtre ?
+    // gère les marges
     @Override
     public Insets getInsets() {
         Insets normal = super.getInsets();

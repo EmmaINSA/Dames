@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /**
  * Classe qui gère le bouton JcJ (et aurait pu gérer le bouton JvIA s'il y avait une IA)
- * @version 2.0.0
+ * @version 2.0.1
  * @see Menu
  * @see PanelMenu
  * */
