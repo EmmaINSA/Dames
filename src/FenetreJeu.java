@@ -19,19 +19,16 @@ public class FenetreJeu extends JFrame{
     private Plateau plateau;
     private int[] size = {1000,740};
     private int[] pos = new int[2];
-    private boolean gamemode;
     private Image icone;
 
     /**
      * Constructeur appelé quand on commence le jeu à proprement parler
-     * @param gamemode -> false : JcJ
-     *                 -> true : J vs IA
      * */
-    FenetreJeu(boolean gamemode){
-        this.init(gamemode);        // gère l'initialisation de la fenetre
+    FenetreJeu(){
+        this.init();        // gère l'initialisation de la fenetre
     }
 
-    private void init(boolean gamemode){
+    private void init(){
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         double screenSizeWidth = screenSize.getWidth();
@@ -41,8 +38,6 @@ public class FenetreJeu extends JFrame{
         }catch (IOException e){
             e.printStackTrace();
         }
-
-        this.gamemode = gamemode;
         this.plateau = new Plateau();
         this.setTitle("Daaaames son !");
         this.setSize(this.size[0],this.size[1]);

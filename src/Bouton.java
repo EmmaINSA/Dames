@@ -63,7 +63,7 @@ public class Bouton extends JButton implements MouseListener {
     }
 
     public void mousePressed(MouseEvent event) {
-        FenetreJeu game = new FenetreJeu(this.fonction.equals("IA"));
+        FenetreJeu game = new FenetreJeu();
     }
 
     public void mouseReleased(MouseEvent event) { }
