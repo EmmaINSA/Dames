@@ -43,7 +43,7 @@ public class FenetreJeu extends JFrame{
         }
 
         this.gamemode = gamemode;
-        this.plateau = new Plateau(gamemode);
+        this.plateau = new Plateau();
         this.setTitle("Daaaames son !");
         this.setSize(this.size[0],this.size[1]);
         this.setLocationRelativeTo(null);
